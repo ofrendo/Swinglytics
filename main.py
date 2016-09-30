@@ -29,12 +29,8 @@ camera = picamera.PiCamera()
 camera.resolution = (1024, 768) # might need to reduce this
 camera.framerate = 30
 
-for filename in camera.record_sequence(
-		format="h264",
-		itertools.cycle(FILENAMES),
-		# Record motion data to our custom output object
-        motion_output=SimpleMotionDetector(camera)
-		):
+# Record motion data to our custom output object
+for filename in camera.record_sequence(format="h264", itertools.cycle(FILENAMES), motion_output=SimpleMotionDetector(camera)):
 	print('Recording to %s' % filename)
     camera.wait_recording(CAP_LEN)
 	
