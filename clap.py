@@ -1,5 +1,4 @@
-#!/usr/bin/python
-https://github.com/nikhiljohn10/pi-clap
+# https://github.com/nikhiljohn10/pi-clap
 
 import pyaudio
 import sys

@@ -1,16 +1,14 @@
 # http://picamera.readthedocs.io/en/release-1.12/recipes2.html#custom-outputs
+# http://picamera.readthedocs.io/en/release-1.12/api_array.html#pimotionanalysis
 
+
+import multiprocessing
 import picamera
 import picamera.array
 import numpy as np
 import itertools
 
-
-FILENAMES = ("cap1.h264", "cap2.h264")
-CAP_LEN = 10
-
-
-class MyMotionDetector(picamera.array.PiMotionAnalysis):
+class SimpleMotionAnalyzer(picamera.array.PiMotionAnalysis):
 	# this needs to take less than the time between frames, e.g. 33ms for 30fps
     # better to put into queue for other thread
     def analyse(self, a):
@@ -24,13 +22,23 @@ class MyMotionDetector(picamera.array.PiMotionAnalysis):
             print('Motion detected!')
 			# Save/trigger timestamp of motion to disk/env variable	
 			
-			
-camera = picamera.PiCamera()
-camera.resolution = (1024, 768) # might need to reduce this
-camera.framerate = 30
 
-# Record motion data to our custom output object
-for filename in camera.record_sequence(format="h264", itertools.cycle(FILENAMES), motion_output=SimpleMotionDetector(camera)):
-	print('Recording to %s' % filename)
-    camera.wait_recording(CAP_LEN)
+def record():
+    FILENAMES = ("cap1.h264", "cap2.h264")
+    CAP_LEN = 10
+
+    camera = picamera.PiCamera()
+    camera.resolution = (1024, 768) # might need to reduce this
+    camera.framerate = 30
+
+    # Record motion data to our custom output object
+    for filename in camera.record_sequence(
+            itertools.cycle(FILENAMES), 
+            format="h264", 
+            motion_output=SimpleMotionAnalyzer(camera)
+        ):
+        print('Recording to %s' % filename)
+        camera.wait_recording(CAP_LEN)
+			
+
 	
