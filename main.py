@@ -22,7 +22,7 @@ class MyMotionDetector(picamera.array.PiMotionAnalysis):
         # than 60, then say we've detected motion
         if (a > 60).sum() > 10:
             print('Motion detected!')
-			# Save/trigger timestamp of motion		
+			# Save/trigger timestamp of motion to disk/env variable	
 			
 			
 camera = picamera.PiCamera()
