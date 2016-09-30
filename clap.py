@@ -25,16 +25,16 @@ def waitForClaps(threadName):
 	global wait
 	global exitFlag
 	global pin
-	print "Waiting for more claps"
+	print("Waiting for more claps")
 	sleep(wait)
 	if clap == 2:
-		print "Two claps"
+		print("Two claps")
 		toggleLight(pin)
 	# elif clap == 3:
 	# 	print "Three claps"
 	elif clap == 4:
 		exitFlag = True
-	print "Claping Ended"
+	print("Claping Ended")
 	clap = 0
 	flag = 0
 
@@ -59,14 +59,14 @@ def main():
 	GPIO.setmode(GPIO.BCM)
 	GPIO.setup(pin, GPIO.OUT)
 	try:
-		print "Clap detection initialized"
+		print("Clap detection initialized")
 		while True:
 			data = stream.read(chunk)
 			as_ints = array('h', data)
 			max_value = max(as_ints)
 			if max_value > threshold:
 				clap += 1
-				print "Clapped"
+				print("Clapped")
 			if clap == 1 and flag == 0:
 				thread.start_new_thread( waitForClaps, ("waitThread",) )
 				flag = 1
