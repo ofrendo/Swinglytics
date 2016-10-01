@@ -11,8 +11,13 @@ import numpy
 import time
 import multiprocessing as mp
 
+THRESHOLD = 150
 
 def start_listening(triggerSound):
+	print("############################ SOUND ###############################")
+	print("Starting to listen with threshold=", THRESHOLD)
+	print("##################################################################")
+
 	inp = alsaaudio.PCM(alsaaudio.PCM_CAPTURE)
 	inp.setchannels(1)
 	inp.setrate(44100)
@@ -24,9 +29,9 @@ def start_listening(triggerSound):
 		a = numpy.fromstring(data, dtype='int16')
 		
 		val = numpy.abs(a).mean()
-		if val > 150:
+		if val > THRESHOLD:
 			triggerSound.value = time.time()
-			print("Clapped: ", val, " at ", triggerSound.value)
+			print("Sound trigger", val, " at ", triggerSound.value)
 
 
 
