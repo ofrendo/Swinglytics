@@ -9,13 +9,8 @@ import numpy as np
 import itertools
 import time
 
-RESOLUTION = (1024, 768)
-FRAMERATE = 30
-FILENAMES = ("rpi/vid/cap1.h264", "rpi/vid/cap2.h264")
-CAP_LEN = 10 # how long should each capture be
+import golfConfig as conf
 
-THRESHOLD = 60
-MIN_NUMBER_MOTION_VECTORS = 20
 
 class SimpleMotionAnalyzer(picamera.array.PiMotionAnalysis):
     def __init__(self, camera, triggerMotion):
@@ -31,35 +26,40 @@ class SimpleMotionAnalyzer(picamera.array.PiMotionAnalysis):
             ).clip(0, 255).astype(np.uint8)
         # If there're more than 10 vectors with a magnitude greater
         # than 60, then say we've detected motion
-        if (a > THRESHOLD).sum() > MIN_NUMBER_MOTION_VECTORS:
+        if (a > conf.CAMERA_MOTION_THRESHOLD).sum() > conf.CAMERA_MIN_NUMBER_MOTION_VECTORS:
             ts = time.time()
             print("Motion detected at", ts)
             # Save/trigger timestamp of motion to shared variable
             self.triggerMotion.value = ts
             
-            
+def getFileIndex(filename):
+    for i in range(len(conf.CAMERA_FILENAMES)):
+        if filename == conf.CAMERA_FILENAMES[i]:
+            return i
 
-def start_record(triggerMotion):
+def start_record(triggerMotion, cameraFilenameTS):
     print("########################### CAMERA ##############################")
-    print("Starting camera recording at", RESOLUTION[0], "x", RESOLUTION[1], "with", FRAMERATE, "fps...")
-    print("Motion detection: threshold=", THRESHOLD, " min_number_motion_vectors=", MIN_NUMBER_MOTION_VECTORS)
+    print("Starting camera recording at", conf.CAMERA_RESOLUTION[0], "x", conf.CAMERA_RESOLUTION[1], "with", conf.CAMERA_FRAMERATE, "fps...")
+    print("Motion detection: threshold=", conf.CAMERA_MOTION_THRESHOLD, " min_number_motion_vectors=", conf.CAMERA_MIN_NUMBER_MOTION_VECTORS)
     print("##################################################################")
 
     camera = picamera.PiCamera()
-    camera.resolution = RESOLUTION # might need to reduce this
-    camera.framerate = FRAMERATE
+    camera.resolution = conf.CAMERA_RESOLUTION # might need to reduce this
+    camera.framerate = conf.CAMERA_FRAMERATE
 
     # Record motion data to our custom output object
     for filename in camera.record_sequence(
-            itertools.cycle(FILENAMES), 
+            itertools.cycle(conf.CAMERA_FILENAMES), 
             format="h264", 
             motion_output=SimpleMotionAnalyzer(camera, triggerMotion)
         ):
-        print('Recording to %s' % filename)
-        camera.wait_recording(CAP_LEN)
+        i = getFileIndex(filename)
+        cameraFilenameTS[i] = time.time()
+
+        print("Recording to",  filename, "at", time.time())
+        camera.wait_recording(conf.CAMERA_CAP_LEN)
             
 
 if __name__ == '__main__':
     # Only executed if explicitely calling this file: use for testing purposes
-    triggerMotion = mp.Value("d", -1)
-    start_record(triggerMotion) 
+    start_record(conf.CAMERA_TRIGGER_MOTION, conf.CAMERA_FILENAMES_TS) 
