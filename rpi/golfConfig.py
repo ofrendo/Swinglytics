@@ -26,3 +26,4 @@ SOUND_TRIGGER_SOUND = mp.Value("d", -1)
 
 
 # Handler stuff
+HANDLER_MIN_SWING_DELAY = 1

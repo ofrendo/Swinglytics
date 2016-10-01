@@ -10,6 +10,7 @@ import golfConfig as conf
 
 clipStartToMiddleDuration = 3
 clipMiddleToEndDuration = 3
+lastSwingRecorded = -1
 
 def printSwingConsoleMessage():
 	print("  ____          _                                          _          _ _ ")
@@ -22,6 +23,12 @@ def printSwingConsoleMessage():
 
 
 def createSwingClip(tsMiddle, cameraFilenameTS): 
+	global lastSwingRecorded
+	if tsMiddle - lastSwingRecorded <= conf.HANDLER_MIN_SWING_DELAY:
+		print("Too little time passed since last swing trigger")
+		return
+	lastSwingRecorded = time.time()
+
 	printSwingConsoleMessage()
 
 	# need to find appropriate file(s) to cut from with the help of tsMiddle
@@ -85,13 +92,12 @@ if __name__ == '__main__':
 	while True:
 		# If the two triggers happen within a second of each other
 		if triggerMotion.value > 0 and triggerSound.value > 0 and abs(triggerMotion.value-triggerSound.value) <= 1:
-			# Reset timestamps before cutting in case of false positives
-			triggerMotion.value = -1
-			triggerSound.value = -1
-
 			# Use timestamp of sound to create x second clip with ffmpeg
 			createSwingClip(triggerSound.value, conf.CAMERA_FILENAMES_TS)
 
+			# Reset timestamps before cutting in case of false positives
+			triggerMotion.value = -1
+			triggerSound.value = -1
 
 		else:
 			#print("done")
