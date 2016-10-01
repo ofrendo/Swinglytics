@@ -51,6 +51,7 @@ def start_record(triggerMotion, cameraFilenameTS):
     for filename in camera.record_sequence(
             itertools.cycle(conf.CAMERA_FILENAMES), 
             format="h264", 
+            # format="yuv", with this we can't use motion detection
             motion_output=SimpleMotionAnalyzer(camera, triggerMotion)
         ):
         i = getFileIndex(filename)

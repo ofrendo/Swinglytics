@@ -5,10 +5,11 @@ import multiprocessing as mp
 # Camera stuff
 CAMERA_RESOLUTION = (1024, 768)
 CAMERA_FRAMERATE = 30
-CAMERA_FILENAMES = ("rpi/vid/cap1.h264", 
-             "rpi/vid/cap2.h264",
-             "rpi/vid/cap3.h264",
-             "rpi/vid/cap4.h264")
+ending = "h264"
+CAMERA_FILENAMES = ("rpi/vid/cap1." + ending, 
+             "rpi/vid/cap2." + ending,
+             "rpi/vid/cap3." + ending,
+             "rpi/vid/cap4." + ending)
 CAMERA_FILENAMES_TS = mp.Array("d", [-1, -1, -1, -1]) 
 CAMERA_CAP_LEN = 10 # how long should each capture be
 
