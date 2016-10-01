@@ -23,9 +23,11 @@ class SimpleMotionAnalyzer(picamera.array.PiMotionAnalysis):
 			# Save/trigger timestamp of motion to disk/env variable	
 			
 
-def record():
+def start_record(triggerMotion):
     FILENAMES = ("cap1.h264", "cap2.h264")
     CAP_LEN = 10
+
+    return
 
     camera = picamera.PiCamera()
     camera.resolution = (1024, 768) # might need to reduce this

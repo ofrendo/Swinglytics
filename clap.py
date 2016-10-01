@@ -2,7 +2,7 @@
 
 import pyaudio
 import sys
-import thread
+import threading
 from time import sleep
 from array import array
 import RPi.GPIO as GPIO
@@ -38,7 +38,7 @@ def waitForClaps(threadName):
 	clap = 0
 	flag = 0
 
-def main():
+def start_listening(triggerSound):
 	global clap
 	global flag
 	global pin
@@ -68,16 +68,16 @@ def main():
 				clap += 1
 				print("Clapped")
 			if clap == 1 and flag == 0:
-				thread.start_new_thread( waitForClaps, ("waitThread",) )
+				threading.start_new_thread( waitForClaps, ("waitThread",) )
 				flag = 1
 			if exitFlag:
 				sys.exit(0)
 	except (KeyboardInterrupt, SystemExit):
-		print "\rExiting"
+		print("\rExiting")
 		stream.stop_stream()
 		stream.close()
 		p.terminate()
 		GPIO.cleanup()
 
-if __name__ == '__main__':
-	main()
+#if __name__ == '__main__':
+#	main()
