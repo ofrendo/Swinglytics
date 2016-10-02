@@ -11,8 +11,13 @@ import numpy
 import time
 import multiprocessing as mp
 
+import golfConfig as conf
 
 def start_listening(triggerSound):
+	print("############################ SOUND ###############################")
+	print("Starting to listen with threshold=", conf.SOUND_THRESHOLD)
+	print("##################################################################")
+
 	inp = alsaaudio.PCM(alsaaudio.PCM_CAPTURE)
 	inp.setchannels(1)
 	inp.setrate(44100)
@@ -24,9 +29,9 @@ def start_listening(triggerSound):
 		a = numpy.fromstring(data, dtype='int16')
 		
 		val = numpy.abs(a).mean()
-		if val > 150:
+		if val > conf.SOUND_THRESHOLD:
 			triggerSound.value = time.time()
-			print("Clapped: ", val, " at ", triggerSound.value)
+			print("Sound trigger", val, " at ", triggerSound.value)
 
 
 
@@ -35,6 +40,5 @@ def start_listening(triggerSound):
 
 if __name__ == '__main__':
 	# Only executed if explicitely calling this file: use for testing purposes
-	triggerSound = mp.Value("d", -1)
-	start_listening(triggerSound)
+	start_listening(conf.SOUND_TRIGGER_SOUND)
    
