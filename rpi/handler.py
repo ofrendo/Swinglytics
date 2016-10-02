@@ -7,6 +7,7 @@ import subprocess
 from camera import start_record
 from soundListenerUSB import start_listening
 import golfConfig as conf
+import handlerCloudStorage as storage
 
 clipStartToMiddleDuration = 2.5
 clipMiddleToEndDuration = 2.5
@@ -41,8 +42,8 @@ def createSwingClip(tsMiddle, cameraFilenameTS):
 	#                ^
 	# (2) |--------------cap1-----------+++|++-----------cap2--------------|
 	#                                     ^ 
-	# (3) |--------------cap1------------++|+++----------cap2--------------|
-	#                                       ^    
+	# (3) |--------------cap1-------------+|++++---------cap2--------------|
+	#                                        ^     
 
 	# First find the file
 	filename0 = "" # is the previous file
@@ -55,14 +56,14 @@ def createSwingClip(tsMiddle, cameraFilenameTS):
 	for i in range(len(cameraFilenameTS)): 
 		diffToFirstClipStart = tsMiddle - cameraFilenameTS[i]
 		if diffToFirstClipStart <= conf.CAMERA_CAP_LEN:
-			filename0 = conf.CAMERA_FILENAMES[i-1 % len(conf.CAMERA_FILENAMES)]
+			filename0 = conf.CAMERA_FILENAMES[(i-1) % len(conf.CAMERA_FILENAMES)]
 			filename1 = conf.CAMERA_FILENAMES[i]
-			filename2 = conf.CAMERA_FILENAMES[i+1 % len(conf.CAMERA_FILENAMES)]
+			filename2 = conf.CAMERA_FILENAMES[(i+1) % len(conf.CAMERA_FILENAMES)]
 			break
 
 
 	# Next check which case we are in
-	print("Handler is sleeping (waiting for files to finish writing...")
+	print("Handler is sleeping (waiting for files to finish writing)...")
 	case = -1
 	if diffToFirstClipStart >= clipStartToMiddleDuration:
 		# Either (1) or (2)
@@ -91,26 +92,38 @@ def createSwingClip(tsMiddle, cameraFilenameTS):
 	# (http://stackoverflow.com/questions/38112711/how-to-get-the-duration-bitrate-of-a-h264-file-with-avconv-ffmpeg)
 	if case == 1:
 		convertToMP4(filename1)
-		cutMP4(filename1, diffToFirstClipStart-clipStartToMiddleDuration, clipStartToMiddleDuration+clipMiddleToEndDuration)
+		cutMP4(filename1, 
+			diffToFirstClipStart-clipStartToMiddleDuration, 
+			clipStartToMiddleDuration+clipMiddleToEndDuration,
+			"rpi/vid/swingClip.mp4")
 	elif case == 2:
 		convertToMP4(filename1)
 		convertToMP4(filename2)
+		cutMP4(filename1, diffToFirstClipStart-clipStartToMiddleDuration, None, "rpi/vid/swingClipP1.mp4")
+		cutMP4(filename2, 0, clipMiddleToEndDuration - (conf.CAMERA_CAP_LEN-diffToFirstClipStart), "rpi/vid/swingClipP2.mp4")
+		concatenateMP4("rpi/vid/swingClipP1.mp4", "rpi/vid/swingClipP2.mp4")
 	elif case == 3:
 		convertToMP4(filename0)
 		convertToMP4(filename1)
+		cutMP4(filename0, conf.CAMERA_CAP_LEN- (clipStartToMiddleDuration-diffToFirstClipStart), None, "rpi/vid/swingClipP1.mp4")
+		cutMP4(filename1, 0, diffToFirstClipStart + clipMiddleToEndDuration, "rpi/vid/swingClipP2.mp4")
+		concatenateMP4("rpi/vid/swingClipP1.mp4", "rpi/vid/swingClipP2.mp4")
 	# p.wait #sync
+	storage.uploadFile("rpi/vid/swingClip.mp4", "swingClip.mp4")
+
 
 	print("Handler is listening...")
 
 def convertToMP4(filename):
 	print("Converting", filename, "to mp4...")
 	# -y overwrite without asking
+	# -r define framerate: otherwise ffmpeg will use default 25fps
 	# -i input file
 	# -c copy 
 	# output file
-	subprocess.call(["ffmpeg -loglevel quiet -y -i " + filename + " -c copy " + filename.replace("h264", "mp4")], shell=True) # output file
+	subprocess.call(["ffmpeg -loglevel quiet -y -r " + str(conf.CAMERA_FRAMERATE) + " -i " + filename + " -c copy " + filename.replace("h264", "mp4")], shell=True) # output file
 
-def cutMP4(filename, start, duration):
+def cutMP4(filename, start, duration, fileOutput):
 	filename = filename.replace("h264", "mp4")
 	print("Cutting", filename, "with start=", start, "and duration=", duration, "...")
 	# -y overwrite without asking
@@ -119,7 +132,26 @@ def cutMP4(filename, start, duration):
 	# -c copy with this green squares, without this very slow (~23s with s=3 and t=6)
 	# -t [duration] how long should be the clip be
 	# output file
-	subprocess.call(["ffmpeg -loglevel quiet -y -ss " + str(round(start, 1)) + " -i " + filename + " -c copy " + "-t " + str(duration) + " rpi/vid/swingClip.mp4"], shell=True) # output file
+	callString = "ffmpeg -loglevel quiet -y -ss " + str(round(start, 1)) + " -i " + filename + " -c copy "
+	if duration != None: 
+		callString += " -t " + str(duration)
+	callString += " " + fileOutput
+
+	subprocess.call([callString], shell=True) # output file
+
+def concatenateMP4(filename1, filename2):
+	filename1 = filename1.replace("h264", "mp4")
+	filename2 = filename2.replace("h264", "mp4")
+	print("Concatening", filename1, "and", filename2)
+	# Create intermediate file
+	subprocess.call(["echo \"file '" + filename1 + "'\nfile '" + filename2 + "'\" > concat.txt"], shell=True)
+	# -y overwrite without asking
+	# -i input files to concatenate (http://stackoverflow.com/questions/7333232/concatenate-two-mp4-files-using-ffmpeg)
+	# -c copy with this green squares, without this very slow (~23s with s=3 and t=6)
+	# output file
+	subprocess.call(["ffmpeg -loglevel quiet -y -f concat -i concat.txt -c copy rpi/vid/swingClip.mp4"], shell=True)
+	# Remove old file
+	#subprocess.call(["rm concat.txt"], shell=True)
 
 
 if __name__ == '__main__':
