@@ -25,4 +25,4 @@ def uploadFile(filename, key):
 
 if __name__ == '__main__':
 	# Only executed if explicitely calling this file: use for testing purposes
-	uploadFile("rpi/test/test_ser10.mp4")
+	uploadFile("rpi/test/test_ser10.mp4", "testFile")
