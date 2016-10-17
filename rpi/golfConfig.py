@@ -18,6 +18,7 @@ CAMERA_MIN_NUMBER_MOTION_VECTORS = 20
 
 CAMERA_TRIGGER_MOTION = mp.Value("d", -1) # saves a shared timestamp when the last motion detection occured
 
+CAMERA_SETUP = 2 # 1 for PiCamera, 2 for USB Camera, and 3 for both
 
 # Sound stuff
 SOUND_THRESHOLD = 150 # how loud does the noise have to be

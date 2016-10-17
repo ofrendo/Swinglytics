@@ -5,6 +5,7 @@ import sys
 import subprocess
 
 from camera import start_record
+from multi_camera import start_record
 from soundListenerUSB import start_listening
 import golfConfig as conf
 import handlerCloudStorage as storage
@@ -160,7 +161,7 @@ if __name__ == '__main__':
 	triggerMotion = conf.CAMERA_TRIGGER_MOTION
 	triggerSound = conf.SOUND_TRIGGER_SOUND
 
-	processCamera = mp.Process(name="processCamera", target=start_record, args=(triggerMotion, conf.CAMERA_FILENAMES_TS))
+	processCamera = mp.Process(name="processCamera", target=start_record(conf.CAMERA_SETUP), args=(triggerMotion, conf.CAMERA_FILENAMES_TS))
 	processSound = mp.Process(name="processSound", target=start_listening, args=(triggerSound,))
 
 	processCamera.daemon = True
