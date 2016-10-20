@@ -1,4 +1,15 @@
+# Raspbery pi
 __pycache__
 *.pyc
 rpi/vid/
 concat.txt
+
+
+# Server
+
+
+
+
+# Web
+# web/QRTest/node_modules
+
