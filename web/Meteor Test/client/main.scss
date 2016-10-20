@@ -43,6 +43,10 @@ a:link{text-decoration: none; color: inherit !important;}
 .swinglytics-navbar{
   //background-color: $navbarBG;
   background: $lightgreen;
+  background: -webkit-linear-gradient($lightgreen, $darkgreen);
+  background: -o-linear-gradient($lightgreen, $darkgreen);
+  background: -moz-linear-gradient($lightgreen, $darkgreen);
+  background: linear-gradient($lightgreen, $darkgreen); 
   border-radius: 0px;
   color: $defaultText !important;
   border-top:0px;
@@ -261,6 +265,13 @@ i.play-orange{
   color: $lightorange;
 }
 
+i.play-blue{
+  font-size: 140px !important;
+  position: relative;
+  top: -10px;
+  color: #3498db;
+}
+
 i.play-green{
   font-size: 140px !important;
   position: relative;
@@ -340,7 +351,13 @@ i.play-green{
   &:active{}
 }
 
-.orange-text{color: $lightorange !important;}
+.orange-text{
+  color: $lightorange !important;
+}
+
+.blue-text{
+  color: #3498db;
+}
 
 .orange-border{border-color: $lightorange !important;}
 
@@ -404,7 +421,7 @@ i{color: #555;}
     margin-top: 0px;
   }
 
-  i.play-orange, i.play-green{
+  i.play-orange, i.play-green, i.play-blue{
     position: relative;
     top: -4px;
     font-size: 60px !important;
@@ -460,4 +477,123 @@ i{color: #555;}
     font-size: 25px;
     margin-top: 0px;
   }
+
+  // Swing page
+
 }
+
+// Swings Page CSS
+.swing-wrapper{
+  padding-left: 0px;
+  padding-right: 0px;
+}
+
+.swing-panel{
+  margin-top: 0px !important;
+  border-radius:0px !important;
+  border-bottom: none !important;
+  border-top: none !important;
+  border-left: none;
+  border-right: none;
+}
+
+.swing-panel-heading{
+  padding-top: 15px !important;
+  padding-bottom: 15px !important;
+  border-bottom: 1px solid #ddd !important;
+}
+
+.swing-subheader{
+  font-size: 15px;
+  color: #888;
+  line-height: 24px;
+}
+
+.swing-panel-title{
+  font-size: 20px;
+  font-weight: 100;
+  color: #555;
+}
+
+.swing-table-all{
+  background: #444444;
+  color: white;
+}
+
+.swing-table-good{
+  background: $lightgreen;
+  color: white;
+}
+
+.swing-table-bad{
+  background: #F44336;
+  color: white;
+}
+
+.swing-table-fixed{
+  table-layout: fixed;
+  text-align: center;
+  td{
+    width: 33%;
+    padding-left: 10px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    padding-right: 10px;
+  }
+}
+
+.swing-table-session{
+  table-layout: fixed !important;
+  td{
+    padding-left: 10px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-right: 10px;
+  }
+}
+
+.session-number-col{
+  width: 36px;
+  text-align: center;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+.session-number{
+  font-size: 20px;
+  font-weight: 100;
+  color: #888;
+  padding-left: 3px;
+  padding-right: 3px;
+}
+
+.session-date{
+  font-size: 20px;
+  font-weight: 100;
+  color: #555;
+}
+
+.session-time{
+  font-size: 15px;
+  color: #888;
+  font-weight: 100;
+}
+
+.session-swingcount{
+  //float: right;
+  padding-left: 10px;
+  font-size: 15px;
+  color: $darkgreen;
+  font-weight: 100;
+}
+
+.swing-table-panel{
+  border-top: none !important;
+}
+
+.icon-sessions{color: #F44336;}
+.icon-fav{color:#ffc107;}
+
+.panel-body { padding: 0px; }
+
+.panel-body .table {margin-bottom: 0px; }
