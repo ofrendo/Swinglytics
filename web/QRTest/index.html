@@ -1,13 +1,93 @@
 <html>
 	<head>
 		<title>Test QR code reader</title>
-		<script src="https://raw.githubusercontent.com/ofrendo/IS613APDLTPlaceholder/master/web/QRTest/node_modules/qrcode-reader/dist/index.js"></script>
+		<script src="node_modules/qrcode-reader/dist/index.js"></script>
 	</head>
 	<body>
 		<!-- html5 camera input -->
-		Camera input:
-		<input type="file" accept="image/*" capture="camera">
+		<video autoplay="true" id="videoElement"></video>
+		<canvas id="canvas"></canvas>
+		<span id="spanQRResult">Result will appear here...</span>
+	<script>
+		var videoElem = document.querySelector("#videoElement");
+		var canvas = document.querySelector("#canvas");
+		var spanElem = document.querySelector("#spanQRResult");
+		navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia || navigator.oGetUserMedia;
+
+		navigator.mediaDevices.enumerateDevices()
+			.then(function(devices) {
+				var videoDevice = null;
+				devices.forEach(function(device) {
+					//console.log(device.kind + ": " + device.label + " id = " + device.deviceId);
+					if (device.kind === "videoinput" && device.label === "camera2 0, facing back") {
+					//if (device.kind === "videoinput" && device.label === "camera2 1, facing front") {
+						videoDevice = device;
+						//alert(videoDevice.label);
+					}
+					else if (device.kind === "videoinput") { // in case not on android
+						videoDevice = device; 
+					}
+				});
+				onDeviceFound(videoDevice);
+			})
+			.catch(function(err) {
+				alert(err.name + ": " + error.message);
+			});
 
 
+		function onDeviceFound(device) {
+			if (navigator.getUserMedia) {       
+			    //navigator.getUserMedia({video: true}, handleVideo, videoError);
+			    //navigator.getUserMedia({video: { facingMode: { exact: "environment" } } }, handleVideo, videoError);
+			    //alert(videoDevice.deviceId);
+			    var constraints = {
+			    	video: {deviceId: {exact: device.deviceId}}
+			    };
+			    navigator.getUserMedia(constraints, handleVideo, videoError);
+			}
+			else {
+				alert("unable to create video")
+			}
+			 
+		}
+
+		function handleVideo(stream) {
+			var url = window.URL.createObjectURL(stream);
+			console.log(url);
+		    videoElem.src = url;
+		}
+		function videoError(e) {
+		    alert("videoError: " + e.message)
+		}
+
+		function takePicture() {
+		    var context = canvas.getContext('2d');
+		    var width = 500;
+		    var height = 500;
+			canvas.width = width;
+			canvas.height = height;
+			context.drawImage(videoElem, 0, 0, width, height);
+			var data = context.getImageData(0, 0, width, height);
+
+			return data;
+			//var data = canvas.toDataURL('image/png');
+			//photo.setAttribute('src', data);
+			//return data;
+  		}
+  		var qr = new QrCode();
+  		qr.callback = function(result, error) {
+  			if (result) {
+  				spanElem.innerHTML = result;
+  			}
+
+  			console.log(error);
+  		}
+
+		setInterval(function() {
+			var data = takePicture();
+			qr.decode(data);
+		}, 1000);
+		
+	</script>
 	</body>
 </html>
