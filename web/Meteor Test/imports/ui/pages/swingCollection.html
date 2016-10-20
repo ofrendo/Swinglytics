@@ -1,0 +1,92 @@
+<Template name="swingCollectionTemplate">
+
+  {{> navbarTemplate }}
+  <div class="container">
+    <div class="row">
+      <div class="col-xs-12 col-lg-12 swing-wrapper">
+        <div class="panel-group" id="accordion">
+                <div class="panel panel-default swing-panel">
+                    <div class="panel-heading swing-panel-heading">
+                        <h4 class="panel-title swing-panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne"><i class="fa fa-archive " aria-hidden="true"></i> All Swings</a><span class="pull-right swing-subheader">68 swings</span>
+                        </h4>
+                    </div>
+                    <div id="collapseOne" class="panel-collapse collapse in">
+                        <div class="panel-body swing-table-panel">
+                            <table class="table swing-table-fixed">
+                                <tr>
+                                    <td class="swing-table-all">
+                                        <a href="">All</a>
+                                    </td>
+                                    <td class="swing-table-good">
+                                        <a href="">Good</a>
+                                    </td>
+                                    <td class="swing-table-bad">
+                                        <a href="">Bad</a>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default swing-panel">
+                    <div class="panel-heading swing-panel-heading">
+                        <h4 class="panel-title swing-panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo"><i class="fa fa-bullseye icon-sessions" aria-hidden="true"></i> Training Sessions</a><span class="pull-right swing-subheader">3 sessions</span>
+                        </h4>
+                    </div>
+                    <div id="collapseTwo" class="panel-collapse collapse">
+                        <div class="panel-body swing-table-panel">
+                            <table class="table swing-table-session">
+                                <tr>
+                                    <td class="session-number-col"><span class="session-number">3</span></td>
+                                    <td>
+                                        <a href="">
+                                          <span class="session-date">Sun. October 30, 2016</span><br/>
+                                          <span class="session-time">16:34:02 PM</span>
+                                          <span class="session-swingcount">34 swings</span>
+                                        </a>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td class="session-number-col"><span class="session-number">2</span></td>
+                                    <td>
+                                        <a href="">
+                                          <span class="session-date">Wed. October 25, 2016</span><br/>
+                                          <span class="session-time">14:51:29 PM</span>
+                                          <span class="session-swingcount">22 swings</span>
+                                        </a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="session-number-col"><span class="session-number">1</span></td>
+                                    <td>
+                                        <a href="">
+                                          <span class="session-date">Thurs. October 13, 2016</span><br/>
+                                          <span class="session-time">9:21:11 PM</span>
+                                          <span class="session-swingcount">54 swings</span>
+                                        </a>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default swing-panel">
+                    <div class="panel-heading swing-panel-heading">
+                        <h4 class="panel-title swing-panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree"><i class="fa fa-star icon-fav" aria-hidden="true"></i> Favorites</a>
+                        </h4>
+                    </div>
+                    <div id="collapseThree" class="panel-collapse collapse">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+      </div>
+    </div>
+
+  {{> footerTemplate }}
+</Template>
