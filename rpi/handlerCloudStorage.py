@@ -1,5 +1,6 @@
 # http://boto3.readthedocs.io/en/latest/guide/quickstart.html#installation
 
+import time
 import boto3
 from botocore.client import Config
 
@@ -13,12 +14,15 @@ bucket = s3.Bucket(BUCKET_NAME)
 
 
 
-def uploadFile(fileName): 
-	data = open(fileName, "rb")
-	bucket.put_object(Key='test_ser10.mp4', Body=data, ACL="public-read")
-
+def uploadFile(filename, key): 
+	print("Uploading", filename, "...")
+	startTime = time.time()
+	data = open(filename, "rb")
+	bucket.put_object(Key=key, Body=data, ACL="public-read")
+	dt = time.time() - startTime
+	print("Uploaded file in", dt)
 
 
 if __name__ == '__main__':
 	# Only executed if explicitely calling this file: use for testing purposes
-	uploadFile("rpi/test/test_ser10.mp4")
+	uploadFile("rpi/test/test_ser10.mp4", "testFile")

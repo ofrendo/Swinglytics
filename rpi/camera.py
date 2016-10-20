@@ -33,8 +33,8 @@ class SimpleMotionAnalyzer(picamera.array.PiMotionAnalysis):
             self.triggerMotion.value = ts
             
 def getFileIndex(filename):
-    for i in range(len(conf.CAMERA_FILENAMES)):
-        if filename == conf.CAMERA_FILENAMES[i]:
+    for i in range(len(conf.CAMERA_FILENAMES1)):
+        if filename == conf.CAMERA_FILENAMES1[i]:
             return i
 
 def start_record(triggerMotion, cameraFilenameTS):
@@ -49,7 +49,7 @@ def start_record(triggerMotion, cameraFilenameTS):
 
     # Record motion data to our custom output object
     for filename in camera.record_sequence(
-            itertools.cycle(conf.CAMERA_FILENAMES), 
+            itertools.cycle(conf.CAMERA_FILENAMES1), 
             format="h264", 
             # format="yuv", with this we can't use motion detection
             motion_output=SimpleMotionAnalyzer(camera, triggerMotion)
@@ -63,4 +63,4 @@ def start_record(triggerMotion, cameraFilenameTS):
 
 if __name__ == '__main__':
     # Only executed if explicitely calling this file: use for testing purposes
-    start_record(conf.CAMERA_TRIGGER_MOTION, conf.CAMERA_FILENAMES_TS) 
+    start_record(conf.CAMERA_TRIGGER_MOTION1, conf.CAMERA_FILENAMES_TS1) 
