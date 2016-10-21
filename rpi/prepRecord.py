@@ -14,10 +14,8 @@ from pathlib import Path
 
 from camera import start_record
 from multi_camera import start_md
-#from .. import soundListenerUSB import start_listening
+from soundListenerUSB import start_listening
 import golfConfig as conf
-
-lastSwingRecorded = -1
 
 def printSwingConsoleMessage():
 	print("  ____          _                                          _          _ _ ")
@@ -51,31 +49,35 @@ if __name__ == '__main__':
 	processSound.start()
 
 	
-
+	lastSwingRecorded = -1
 	while True:
 		# If the two triggers happen within a second of each other
 		if (triggerMotion1.value > 0 and
-		   triggerMotion2.value > 0 and 
+		   #triggerMotion2.value > 0 and 
 		   triggerSound.value > 0 and 
-		   abs(triggerMotion1.value-triggerMotion2.value) <= 1 and
-		   abs(triggerMotion1.value-triggerSound.value) <= 1 and
-		   abs(triggerMotion2.value-triggerSound.value) <= 1):
+		   #abs(triggerMotion1.value-triggerMotion2.value) <= 1 and
+		   abs(triggerMotion1.value-triggerSound.value) <= 1 
+		   #and abs(triggerMotion2.value-triggerSound.value) <= 1
+		   ):
 			# Use timestamp of sound to create x second clip with ffmpeg
 			#createSwingClip(triggerSound.value, conf.CAMERA_FILENAMES_TS)
 
-			# Reset timestamps before cutting in case of false positives
-			triggerMotion1.value = -1
-			triggerMotion2.value = -1
-			triggerSound.value = -1
-
-
-			if tsMiddle - lastSwingRecorded > conf.HANDLER_MIN_SWING_DELAY:
+			if triggerSound.value - lastSwingRecorded > conf.HANDLER_MIN_SWING_DELAY:
 				# For prep: write timestamp to csv
 				printSwingConsoleMessage()
 
 				fd = open("swingDetections.csv", "a")
-				fd.write("hello world!")
+				fd.write(str(int(triggerSound.value)) + "\n")
 				fd.close()
+
+				lastSwingRecorded = time.time()
+
+			# Reset timestamps after cutting in case of false positives
+			triggerMotion1.value = -1
+			triggerMotion2.value = -1
+			triggerSound.value = -1
+
+			
 
 		else:
 			time.sleep(0.1)
