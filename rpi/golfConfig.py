@@ -3,8 +3,8 @@ import multiprocessing as mp
 
 
 # Camera stuff
-CAMERA_RESOLUTION = (1024, 768)
-CAMERA_FRAMERATE = 30
+CAMERA_RESOLUTION = (1024, 768)  # # #(480, 368)
+CAMERA_FRAMERATE = 24
 ending = "h264"
 CAMERA_FILENAMES1 = ("rpi/vid/cap1_1." + ending, 
              "rpi/vid/cap1_2." + ending,
