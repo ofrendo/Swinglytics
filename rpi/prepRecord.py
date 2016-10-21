@@ -12,10 +12,12 @@ from pathlib import Path
 #	import prepRecord
 #	__package__ = 'rpi.prepRecord'
 
-#from camera import start_record
-from multi_camera import start_record
+from camera import start_record
+from multi_camera import start_md
 #from .. import soundListenerUSB import start_listening
 import golfConfig as conf
+
+lastSwingRecorded = -1
 
 def printSwingConsoleMessage():
 	print("  ____          _                                          _          _ _ ")
@@ -28,6 +30,7 @@ def printSwingConsoleMessage():
 
 
 if __name__ == '__main__':
+	print("Prep record handler is starting...")
 
 	# Value: d for double precision float, b for boolean, i for int
 	# Each value gives the timestamp when it last happened
@@ -35,19 +38,24 @@ if __name__ == '__main__':
 	triggerMotion2 = conf.CAMERA_TRIGGER_MOTION2
 	triggerSound = conf.SOUND_TRIGGER_SOUND
 
-	processCamera1 = mp.Process(name="processCamera", target=start_record, args=(1, triggerMotion1, conf.CAMERA_FILENAMES1, conf.CAMERA_FILENAMES_TS1))
-	processCamera2 = mp.Process(name="processCamera", target=start_record, args=(2, triggerMotion2, conf.CAMERA_FILENAMES2, conf.CAMERA_FILENAMES_TS2))
+	processCameraPi = mp.Process(name="processCameraPi", target=start_record, args=(triggerMotion1, conf.CAMERA_FILENAMES_TS1))
+	processCameraMD = mp.Process(name="processCameraMD", target=start_md, args=(2, triggerMotion1, conf.CAMERA_FILENAMES1, conf.CAMERA_FILENAMES_TS1))
+	
+	#processCamera2 = mp.Process(name="processCamera", target=start_record, args=(2, triggerMotion2, conf.CAMERA_FILENAMES2, conf.CAMERA_FILENAMES_TS2))
 	#processSound = mp.Process(name="processSound", target=start_listening, args=(triggerSound,))
 
-	processCamera1.daemon = True
-	processCamera2.daemon = True
+	processCameraPi.daemon = True
+	processCameraMD.daemon = True
+	
+	#processCamera2.daemon = True
 	#processSound.daemon = True
 
-	processCamera1.start()
-	processCamera2.start()
+	processCameraPi.start()
+	#processCameraMD.start()
+	#processCamera2.start()
 	#processSound.start()
 
-	print("Handler is listening...")
+	
 
 	while True:
 		# If the two triggers happen within a second of each other
@@ -65,8 +73,14 @@ if __name__ == '__main__':
 			triggerMotion2.value = -1
 			triggerSound.value = -1
 
-			# For prep: write timestamp to csv
-			printSwingConsoleMessage()
+
+			if tsMiddle - lastSwingRecorded > conf.HANDLER_MIN_SWING_DELAY:
+				# For prep: write timestamp to csv
+				printSwingConsoleMessage()
+
+				fd = open("swingDetections.csv", "a")
+				fd.write("hello world!")
+				fd.close()
 
 		else:
 			time.sleep(0.1)
