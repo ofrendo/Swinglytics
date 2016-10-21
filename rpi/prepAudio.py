@@ -1,49 +1,26 @@
-#!/usr/bin/env python
-
-## recordtest.py
-##
-## This is an example of a simple sound capture script.
-##
-## The script opens an ALSA pcm forsound capture. Set
-## various attributes of the capture, and reads in a loop,
-## writing the data to standard out.
-##
-## To test it out do the following:
-## python recordtest.py out.raw # talk to the microphone
-## aplay -r 8000 -f S16_LE -c 1 out.raw
-
-
-# Footnote: I'd normally use print instead of sys.std(out|err).write,
-# but we're in the middle of the conversion between python 2 and 3
-# and this code runs on both versions without conversion
-
 import sys
 import time
 import getopt
-import alsaaudio    
+import alsaaudio  
+import wave  
+import numpy
+import golfConfig as conf
 
-def usage():
-    sys.stderr.write('usage: recordtest.py [-c <card>] <file>\n')
-    sys.exit(2)
+def start_listening(triggerSound, minutes, folderName, fileEnding):
+    print("############################ SOUND ###############################")
+    print("Starting to listen with threshold=", conf.SOUND_THRESHOLD)
+    print("##################################################################")
 
-if __name__ == '__main__':
-
-    card = 'sysdefault:CARD=Device'
-
-    opts, args = getopt.getopt(sys.argv[1:], 'c:')
-    for o, a in opts:
-        if o == '-c':
-            card = a
-
-    if not args:
-        usage()
-
-    f = open(args[0], 'wb')
+    # select the default audio card
+    card = 'default'
 
     # Open the device in nonblocking capture mode. The last argument could
     # just as well have been zero for blocking mode. Then we could have
     # left out the sleep call in the bottom of the loop
-    inp = alsaaudio.PCM(alsaaudio.PCM_CAPTURE, alsaaudio.PCM_NONBLOCK, card)
+
+    # inp = alsaaudio.PCM(alsaaudio.PCM_CAPTURE, alsaaudio.PCM_NONBLOCK, card)
+
+    inp = alsaaudio.PCM(alsaaudio.PCM_CAPTURE, alsaaudio.PCM_NONBLOCK)
 
     # Set attributes: Mono, 44100 Hz, 16 bit little endian samples
     inp.setchannels(1)
@@ -57,12 +34,39 @@ if __name__ == '__main__':
     # This means that the reads below will return either 320 bytes of data
     # or 0 bytes of data. The latter is possible because we are in nonblocking
     # mode.
-    inp.setperiodsize(160)
+    inp.setperiodsize(1024)
 
-    total = 0
-    while total < 60 * 44100:
-        l, data = inp.read()
-        if l:
-            total += l
-            f.write(data)
-            time.sleep(.001)
+
+    while True:
+        # reset total frames before each loop
+        total = 0
+        # create a wave writer to write the sound to a file
+        dest = folderName + str(time.time()) + fileEnding
+        print("Writing to file: " + dest)
+        w = wave.open(dest,'w')
+        w.setnchannels(1)
+        w.setsampwidth(2)
+        w.setframerate(44100)
+
+        # 60 * 44100 to record 1 minute of audio
+        while total < minutes * 60 * 44100:
+            l, data = inp.read()
+            try:
+                a = numpy.fromstring(data, dtype='int16')
+            except:
+                print(data)
+            val = numpy.abs(a).mean()
+            if val > conf.SOUND_THRESHOLD:
+                triggerSound.value = time.time()
+                print("Sound trigger", val, " at ", triggerSound.value, " with prepAudio")
+            if l:
+                total += l
+                w.writeframes(data)
+                time.sleep(.001)
+        w.close()
+    
+if __name__ == '__main__':
+    minutes = 0.1
+    folder = 'rpi/sound/'
+    ending = '.wav'
+    start_listening(conf.SOUND_TRIGGER_SOUND, minutes, folder, ending)

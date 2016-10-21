@@ -37,6 +37,13 @@ def getFileIndex(filename):
         if filename == conf.CAMERA_FILENAMES1[i]:
             return i
 
+def writeToFile(camera, filename, cameraFilenameTS):
+    i = getFileIndex(filename)
+    cameraFilenameTS[i] = time.time()
+
+    print("Recording to",  filename, "at", time.time())
+    camera.wait_recording(conf.PREP_FILE_LENGTH)
+
 def start_record(triggerMotion, cameraFilenameTS):
     print("########################### CAMERA ##############################")
     print("Starting camera recording at", conf.CAMERA_RESOLUTION[0], "x", conf.CAMERA_RESOLUTION[1], "with", conf.CAMERA_FRAMERATE, "fps...")
@@ -48,17 +55,20 @@ def start_record(triggerMotion, cameraFilenameTS):
     camera.framerate = conf.CAMERA_FRAMERATE
 
     # Record motion data to our custom output object
-    for filename in camera.record_sequence(
-            itertools.cycle(conf.CAMERA_FILENAMES1), 
-            format="h264", 
-            # format="yuv", with this we can't use motion detection
-            motion_output=SimpleMotionAnalyzer(camera, triggerMotion)
-        ):
-        i = getFileIndex(filename)
-        cameraFilenameTS[i] = time.time()
+    if triggerMotion != None:
+        for filename in camera.record_sequence(
+                itertools.cycle(conf.CAMERA_FILENAMES1), 
+                format="h264", # format="yuv", with this we can't use motion detection
+                motion_output=SimpleMotionAnalyzer(camera, triggerMotion)
+            ):
+            writeToFile(camera, filename, cameraFilenameTS)
+    else:
+        for filename in camera.record_sequence(
+                itertools.cycle(conf.CAMERA_FILENAMES1), 
+                format="h264" # format="yuv", with this we can't use motion detection
+            ):
+            writeToFile(camera, filename, cameraFilenameTS)
 
-        print("Recording to",  filename, "at", time.time())
-        camera.wait_recording(conf.CAMERA_CAP_LEN)
             
 
 if __name__ == '__main__':

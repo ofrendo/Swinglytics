@@ -26,11 +26,6 @@ def printSwingConsoleMessage():
 
 
 def createSwingClip(tsMiddle, cameraFilenameTS): 
-	global lastSwingRecorded
-	if tsMiddle - lastSwingRecorded <= conf.HANDLER_MIN_SWING_DELAY:
-		print("Too little time passed since last swing trigger")
-		return
-	lastSwingRecorded = time.time()
 
 	printSwingConsoleMessage()
 
@@ -184,6 +179,13 @@ if __name__ == '__main__':
 		   abs(triggerMotion1.value-triggerMotion2.value) <= 1 and
 		   abs(triggerMotion1.value-triggerSound.value) <= 1 and
 		   abs(triggerMotion2.value-triggerSound.value) <= 1):
+
+			global lastSwingRecorded
+			if tsMiddle - lastSwingRecorded <= conf.HANDLER_MIN_SWING_DELAY:
+				print("Too little time passed since last swing trigger")
+				continue
+			lastSwingRecorded = time.time()
+
 			# Use timestamp of sound to create x second clip with ffmpeg
 			createSwingClip(triggerSound.value, conf.CAMERA_FILENAMES_TS1)
 			#printSwingConsoleMessage()

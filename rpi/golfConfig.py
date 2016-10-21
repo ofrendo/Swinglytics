@@ -28,6 +28,10 @@ CAMERA_TRIGGER_MOTION1 = mp.Value("d", -1) # saves a shared timestamp when the l
 CAMERA_TRIGGER_MOTION2 = mp.Value("d", -1) # saves a shared timestamp when the last motion detection occured (action cam)
 
 
+AUDIO_DURATION_MINUTES = 10
+RECORD_FOLDER = "rpi/vid/"
+AUDIO_ENDING = ".wav"
+
 
 
 #CAMERA_SETUP = 2 # 1 for PiCamera, 2 for USB Camera, and 3 for both

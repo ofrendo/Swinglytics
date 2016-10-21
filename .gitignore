@@ -3,6 +3,9 @@ __pycache__
 *.pyc
 rpi/vid/*.mp4
 rpi/vid/*.h264
+*.avi
+*.png
+
 concat.txt
 
 

@@ -40,20 +40,15 @@ if __name__ == '__main__':
 
 	processCameraPi = mp.Process(name="processCameraPi", target=start_record, args=(triggerMotion1, conf.CAMERA_FILENAMES_TS1))
 	processCameraMD = mp.Process(name="processCameraMD", target=start_md, args=(2, triggerMotion1, conf.CAMERA_FILENAMES1, conf.CAMERA_FILENAMES_TS1))
-	
-	#processCamera2 = mp.Process(name="processCamera", target=start_record, args=(2, triggerMotion2, conf.CAMERA_FILENAMES2, conf.CAMERA_FILENAMES_TS2))
-	#processSound = mp.Process(name="processSound", target=start_listening, args=(triggerSound,))
+	processSound = mp.Process(name="processSound", target=start_listening, args=(triggerSound,))
 
 	processCameraPi.daemon = True
 	processCameraMD.daemon = True
-	
-	#processCamera2.daemon = True
-	#processSound.daemon = True
+	processSound.daemon = True
 
 	processCameraPi.start()
 	#processCameraMD.start()
-	#processCamera2.start()
-	#processSound.start()
+	processSound.start()
 
 	
 
