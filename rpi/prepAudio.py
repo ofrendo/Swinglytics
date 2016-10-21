@@ -18,9 +18,9 @@ def start_listening(triggerSound, minutes, folderName, fileEnding):
     # just as well have been zero for blocking mode. Then we could have
     # left out the sleep call in the bottom of the loop
 
+    # see alsaaudio.cards() for audio cards and alsaaudio.pcms() for param to give to .PCM()
+    # this selects the default card inp = alsaaudio.PCM(alsaaudio.PCM_CAPTURE, alsaaudio.PCM_NONBLOCK)
     inp = alsaaudio.PCM(alsaaudio.PCM_CAPTURE, alsaaudio.PCM_NONBLOCK, "sysdefault:CARD=Audio")
-
-    #this selects the default card inp = alsaaudio.PCM(alsaaudio.PCM_CAPTURE, alsaaudio.PCM_NONBLOCK)
 
     # Set attributes: Mono, 44100 Hz, 16 bit little endian samples
     inp.setchannels(1)
