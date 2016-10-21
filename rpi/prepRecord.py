@@ -37,6 +37,7 @@ if __name__ == '__main__':
 
 	processCamera1 = mp.Process(name="processCamera", target=start_record, args=(1, triggerMotion1, conf.CAMERA_FILENAMES1, conf.CAMERA_FILENAMES_TS1))
 	processCamera2 = mp.Process(name="processCamera", target=start_record, args=(2, triggerMotion2, conf.CAMERA_FILENAMES2, conf.CAMERA_FILENAMES_TS2))
+	#processSound = mp.Process(name="procesSound", target=start_record, args=(triggerSound, conf.RECORD_FOLDER, conf.AUDIO.ENDING))
 	#processSound = mp.Process(name="processSound", target=start_listening, args=(triggerSound,))
 
 	processCamera1.daemon = True
