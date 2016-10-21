@@ -1,7 +1,8 @@
 # Raspbery pi
 __pycache__
 *.pyc
-rpi/vid/
+rpi/vid/*.mp4
+rpi/vid/*.h264
 concat.txt
 
 

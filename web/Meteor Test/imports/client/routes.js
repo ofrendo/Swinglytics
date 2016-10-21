@@ -11,10 +11,13 @@ import '../ui/components/footer.html';
 import '../ui/pages/login.html';
 import '../ui/pages/register.html';
 import '../ui/pages/navigationDemo.html';
+import '../ui/pages/swingCollection.html';
 
 import '../ui/pages/onboarding1.html';
 import '../ui/pages/onboarding2.html';
 import '../ui/pages/onboarding3.html';
+
+
 
 // routes
 
@@ -78,5 +81,12 @@ FlowRouter.route('/dashboard', {
   name: "Initial",
   action() {
     BlazeLayout.render('LayoutTmpl',  {main: 'dashboardTemplate'} )
+  }
+})
+
+FlowRouter.route('/swingCollection', {
+  name: "Initial",
+  action() {
+    BlazeLayout.render('LayoutTmpl',  {main: 'swingCollectionTemplate'} )
   }
 })
