@@ -6,7 +6,7 @@ rpi/vid/*.h264
 *.avi
 *.png
 *.wav
-
+swingDetections.csv
 concat.txt
 
 
