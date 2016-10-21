@@ -5,6 +5,7 @@ rpi/vid/*.mp4
 rpi/vid/*.h264
 *.avi
 *.png
+*.wav
 
 concat.txt
 
