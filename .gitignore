@@ -8,6 +8,7 @@ rpi/vid/*.h264
 *.wav
 *.csv
 concat.txt
+rpi/prep
 
 
 # Server
