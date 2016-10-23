@@ -20,3 +20,5 @@ server/server-account.json
 # Web
 # web/QRTest/node_modules
 
+# Storage
+storage/*.mp4
