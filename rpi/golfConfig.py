@@ -39,8 +39,12 @@ HANDLER_MIN_SWING_DELAY = 1
 
 
 ## Networking stuff
-SERVER_URL = "http://httpbin.org"
 STATION_ID = 1
+SERVER_URL = "http://httpbin.org"
+
+SERVER_USE_FTP = True # Should ftp be used for file upload? If false AWS will be used
+SERVER_FTP = "192.168.178.76"
+
 
 
 ## Prep stuff
