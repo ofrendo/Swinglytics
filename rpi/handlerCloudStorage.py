@@ -31,11 +31,11 @@ def random_with_N_digits(n):
 
 # Sends a GET request for this station to check if a user is currently logged in
 def sendLoginCheck():
-	url = conf.SERVER_URL + "/api/v1/loginCheck/" + str(conf.STATION_ID)
+	url = conf.SERVER_URL + "/api/v1/checkuser/" + str(conf.STATION_ID)
 	response = requests.get(url)
 	body = response.json()
-	test = json.loads(body["data"])
-	return True
+	#print(body["userID"])
+	return body["userID"]
 
 
 def uploadFileAWS(filename, key):
@@ -64,15 +64,19 @@ def uploadFile(filename, tsMiddle, loginCheck=True):
 	userID = None
 	if (loginCheck == True):
 		userID = sendLoginCheck() 
-		print("[STORAGE] No user is currently logged in.")
 		if (userID == ""):
+			print("[STORAGE] No user is currently logged in.")
 			return
-
+		else:
+			print("[STORAGE] User", userID, "is logged in.")
+	else:
+		userID = "bob"
 
 	# Key is what the file will be named on the server, for example
 	# swingClip_{stationID}_{timestamp}_{random}.mp4
 	random = random_with_N_digits(5)
-	key = "swingClip_" + str(conf.STATION_ID) + "_" + str(int(tsMiddle)) + "_" + str(random) + ".mp4"
+	tsMiddle = int(tsMiddle)
+	key = "swingClip_" + str(conf.STATION_ID) + "_" + str(tsMiddle) + "_" + str(random) + ".mp4"
 
 	if conf.SERVER_USE_FTP == False:
 		uploadFileAWS(filename, key)
@@ -86,15 +90,17 @@ def uploadFile(filename, tsMiddle, loginCheck=True):
 		"userID": userID,
 		"stationID": conf.STATION_ID, 
 		"timestamp": tsMiddle,
-		"random": random}
+		"random": random,
+		"signature": "NOT IMPLEMENTED"}
 	headers = {"content-type": "application/json"}
 	
 	response = requests.post(url, data=json.dumps(payload), headers=headers)
 	print("[STORAGE] Made POST request.")
-	data = response.json()
-	print(data)
-	data2 = json.loads(data["data"])
-	print(data2["stationID"])
+	print(response.text)
+	#data = response.json()
+	#print(data)
+	#data2 = json.loads(data["data"])
+	#print(data2["stationID"])
 
 
 if __name__ == '__main__':
