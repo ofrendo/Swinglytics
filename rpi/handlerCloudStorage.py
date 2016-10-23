@@ -48,10 +48,11 @@ def uploadFile(filename, tsMiddle):
 		uploadFileFTP(filename, key)
 
 
-	print("[STORAGE] Making POST request to server...")
+	url = conf.SERVER_URL + "/video"
+	print("[STORAGE] Making POST request to ", url, "...")
 	payload = {"stationID": conf.STATION_ID, "ts": tsMiddle}
 	headers = {"content-type": "application/json"}
-	url = conf.SERVER_URL + "/post"
+	
 	response = requests.post(url, data=json.dumps(payload), headers=headers)
 	print("[STORAGE] Made POST request.")
 	print(response)
