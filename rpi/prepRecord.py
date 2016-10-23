@@ -37,7 +37,7 @@ if __name__ == '__main__':
 	triggerMotion2 = conf.CAMERA_TRIGGER_MOTION2
 	triggerSound = conf.SOUND_TRIGGER_SOUND
 
-	processCameraPi = mp.Process(name="processCameraPi", target=start_record, args=(triggerMotion1, conf.CAMERA_FILENAMES_TS1))
+	processCameraPi = mp.Process(name="processCameraPi", target=start_record, args=(None, conf.CAMERA_FILENAMES_TS1))
 	processCameraMD = mp.Process(name="processCameraMD", target=start_md, args=(2, triggerMotion1, conf.CAMERA_FILENAMES1, conf.CAMERA_FILENAMES_TS1))
 	#processSound = mp.Process(name="processSound", target=start_listening, args=(triggerSound,))
 	processSound = mp.Process(name="processSound", target=start_listening, args=(triggerSound, conf.PREP_FILE_LENGTH/60, 'rpi/sound/','.wav'))
@@ -47,7 +47,7 @@ if __name__ == '__main__':
 	processSound.daemon = True
 
 	processCameraPi.start()
-	#processCameraMD.start()
+	processCameraMD.start()
 	processSound.start()
 
 	
