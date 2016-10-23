@@ -4,14 +4,15 @@ var bodyParser = require('body-parser');
 
 //Express Setup
 var app = express();
+
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(bodyParser.json());
 
 //API Routing
 app.use('/api/v1/video', require('./routes/video'));
-app.use('/api/v1/login', require('./routes/login'));
-app.use('/api/v1/logout', require('./routes/logout'));
+app.use('/api/v1/checkuser', require('./routes/checkuser'));
 
 //Start NodeJS Server
-app.listen(3000);
-console.log('API IS RUNNING on Port 3000');
+var port = 3000; //Change Port here
+app.listen(port);
+console.log('API IS RUNNING on Port: ' + port);
