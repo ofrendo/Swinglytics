@@ -2,19 +2,9 @@ import multiprocessing as mp
 import time
 import sys
 import subprocess
-from pathlib import Path
-
-#if __name__ == '__main__' and __package__ is None:
-#	import_parents(level=2)
-#	top = Path(__file__).resolve().parents[2]#
-#	sys.path.append(str(top))
-#	print(top)
-#	import prepRecord
-#	__package__ = 'rpi.prepRecord'
 
 from camera import start_record
 from multi_camera import start_md
-#from soundListenerUSB import start_listening
 from prepAudio import start_listening
 import golfConfig as conf
 
@@ -39,7 +29,6 @@ if __name__ == '__main__':
 
 	processCameraPi = mp.Process(name="processCameraPi", target=start_record, args=(None, conf.CAMERA_FILENAMES_TS1))
 	processCameraMD = mp.Process(name="processCameraMD", target=start_md, args=(2, triggerMotion1, conf.CAMERA_FILENAMES1, conf.CAMERA_FILENAMES_TS1))
-	#processSound = mp.Process(name="processSound", target=start_listening, args=(triggerSound,))
 	processSound = mp.Process(name="processSound", target=start_listening, args=(triggerSound, conf.PREP_FILE_LENGTH/60, 'rpi/sound/','.wav'))
 
 	processCameraPi.daemon = True

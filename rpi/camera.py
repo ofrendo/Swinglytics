@@ -28,7 +28,7 @@ class SimpleMotionAnalyzer(picamera.array.PiMotionAnalysis):
         # than 60, then say we've detected motion
         if (a > conf.CAMERA_MOTION_THRESHOLD).sum() > conf.CAMERA_MIN_NUMBER_MOTION_VECTORS:
             ts = time.time()
-            print("Motion detected at", ts)
+            print("[PICAMERA] Motion detected at", ts)
             # Save/trigger timestamp of motion to shared variable
             self.triggerMotion.value = ts
             
@@ -38,12 +38,11 @@ def getFileIndex(filename):
             return i
 
 def writeToFile(camera, filename, cameraFilenameTS):
-    print("##################################################################")
     i = getFileIndex(filename)
     cameraFilenameTS[i] = time.time()
 
-    print("Recording to",  filename, "at", time.time())
-    camera.wait_recording(conf.PREP_FILE_LENGTH)
+    print("[PICAMERA] Recording to",  filename, "at", time.time())
+    camera.wait_recording(conf.CAMERA_CAP_LEN)
 
 def start_record(triggerMotion, cameraFilenameTS):
    
@@ -57,14 +56,16 @@ def start_record(triggerMotion, cameraFilenameTS):
 
     # Record motion data to our custom output object
     if triggerMotion != None:
+        print("Motion detection: threshold=", conf.CAMERA_MOTION_THRESHOLD, " min_number_motion_vectors=", conf.CAMERA_MIN_NUMBER_MOTION_VECTORS)
+        print("##################################################################")
         for filename in camera.record_sequence(
                 itertools.cycle(conf.CAMERA_FILENAMES1), 
                 format="h264", # format="yuv", with this we can't use motion detection
                 motion_output=SimpleMotionAnalyzer(camera, triggerMotion)
             ):
-            print("Motion detection: threshold=", conf.CAMERA_MOTION_THRESHOLD, " min_number_motion_vectors=", conf.CAMERA_MIN_NUMBER_MOTION_VECTORS)
             writeToFile(camera, filename, cameraFilenameTS)
     else:
+        print("##################################################################")
         for filename in camera.record_sequence(
                 itertools.cycle(conf.CAMERA_FILENAMES1), 
                 format="h264" # format="yuv", with this we can't use motion detection
