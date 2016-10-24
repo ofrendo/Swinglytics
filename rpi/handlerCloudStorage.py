@@ -35,19 +35,19 @@ def generateSignature(plaintext):
 	h = SHA256.new()
 	h.update(bytes(plaintext, "utf-8"))
 	hash = h.hexdigest()
-	print("Hash:", hash)
+	#print("Hash:", hash)
 
 	# http://stackoverflow.com/questions/21327491/using-pycrypto-how-to-import-a-rsa-public-key-and-use-it-to-encrypt-a-string
 	# Then encrypt hash with private key as signature
-	path = "C:/Users/D059373/.ssh/work_laptop_private.pem"
+	path = "/home/pi/.ssh/id_rsa_private.pem"
 	f = open(path, "r")
 	privKey = RSA.importKey(f.read())
 	encrypted = privKey.encrypt(bytes(hash, "utf-8"), "unneeded")[0]
-	result = binascii.hexlify(encrypted)
+	result = str(binascii.hexlify(encrypted))[1:] #  the 1: removes "b" infront of string, because its a byte string http://stackoverflow.com/questions/17013089/python-get-rid-of-bytes-b
+	#result = encrypted.encode('hex') 
 
-
-	print("Encrypted: ", result)
-
+	#print("Encrypted: ", result)
+	return result
 	# On server decrypt hash with public key
 	# generate hash of plaintext
 	# Compare: if same, valid signature
@@ -108,7 +108,7 @@ def uploadFile(videoName, thumbnailName, tsMiddle, loginCheck=True):
 		uploadFileFTP(videoName, keyVideo)
 		uploadFileFTP(thumbnailName, keyThumbnail)
 
-
+	signature = generateSignature(str(conf.STATION_ID) + "_" + str(tsMiddle) + "_" + str(random))
 	url = conf.SERVER_URL + "/api/v1/video"
 	print("[STORAGE] Making POST request to ", url, "...")
 	payload = {
@@ -116,9 +116,9 @@ def uploadFile(videoName, thumbnailName, tsMiddle, loginCheck=True):
 		"stationID": conf.STATION_ID, 
 		"timestamp": tsMiddle,
 		"random": random,
-		"signature": "NOT IMPLEMENTED"}
+		"signature": signature
+	}
 	headers = {"content-type": "application/json"}
-	
 	response = requests.post(url, data=json.dumps(payload), headers=headers)
 	print("[STORAGE] Made POST request.")
 	print(response.text)
@@ -135,4 +135,4 @@ if __name__ == '__main__':
 	if len(sys.argv)>1 and sys.argv[1] == "ftp":
 		conf.SERVER_USE_FTP = True
 
-	uploadFile("rpi/vid/swingClip.mp4", time.time(), False)
+	uploadFile("rpi/vid/swingClip.mp4", "rpi/vid/swingClip.png", time.time(), False)
