@@ -24,9 +24,9 @@ bucket = s3.Bucket(BUCKET_NAME)
 
 # see http://stackoverflow.com/questions/2673385/how-to-generate-random-number-with-the-specific-length-in-python
 def random_with_N_digits(n):
-    range_start = 10**(n-1)
-    range_end = (10**n)-1
-    return randint(range_start, range_end)
+	range_start = 10**(n-1)
+	range_end = (10**n)-1
+	return randint(range_start, range_end)
 
 
 # Sends a GET request for this station to check if a user is currently logged in
@@ -59,7 +59,7 @@ def uploadFileFTP(filename, key):
 	dt = time.time() - startTime
 	print("[STORAGE] Uploaded file to FTP  in", dt)
 
-def uploadFile(filename, tsMiddle, loginCheck=True): 
+def uploadFile(videoName, thumbnailName, tsMiddle, loginCheck=True):
 	# Check if a user is logged in before submitting a video
 	userID = None
 	if (loginCheck == True):
@@ -76,12 +76,14 @@ def uploadFile(filename, tsMiddle, loginCheck=True):
 	# swingClip_{stationID}_{timestamp}_{random}.mp4
 	random = random_with_N_digits(5)
 	tsMiddle = int(tsMiddle)
-	key = "swingClip_" + str(conf.STATION_ID) + "_" + str(tsMiddle) + "_" + str(random) + ".mp4"
-
+	keyVideo = "swingClip_" + str(conf.STATION_ID) + "_" + str(tsMiddle) + "_" + str(random) + ".mp4"
+	keyThumbnail = "swingClip" + str(conf.STATION_ID) + "_" + str(tsMiddle) + "_" + str(random) + ".png"
 	if conf.SERVER_USE_FTP == False:
-		uploadFileAWS(filename, key)
+		uploadFileAWS(videoName, keyVideo)
+		uploadFileAWS(thumbnailName, keyThumbnail)
 	else:
-		uploadFileFTP(filename, key)
+		uploadFileFTP(videoName, keyVideo)
+		uploadFileFTP(thumbnailName, keyThumbnail)
 
 
 	url = conf.SERVER_URL + "/api/v1/video"

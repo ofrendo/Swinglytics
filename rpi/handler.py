@@ -26,7 +26,7 @@ def printSwingConsoleMessage():
 
 
 
-def createSwingClip(tsMiddle, cameraFilenameTS): 
+def createSwingClip(tsMiddle, cameraFilenameTS):
 	printSwingConsoleMessage()
 
 	# need to find appropriate file(s) to cut from with the help of tsMiddle
@@ -107,19 +107,13 @@ def createSwingClip(tsMiddle, cameraFilenameTS):
 		concatenateMP4("rpi/vid/swingClipP1.mp4", "rpi/vid/swingClipP2.mp4")
 	# p.wait #sync
 
-	thumbnail = createThumbnail("rpi/vid/swingClip.mp4","rpi/vid/swingThumbnail.png")
+	thumbnail = createThumbnail("rpi/vid/swingClip.mp4","rpi/vid/swingClip.png")
 	# Upload files in new subprocesses
-	processUploadThumbnail = mp.Process(name="processUploadThumbnail",
-								target=storage.uploadFile,
-								args=("rpi/vid/swingThumbnail.png",
-										tsMiddle))
-	processUploadThumbnail.daemon = True
-	processUploadThumbnail.start()
-
 	processUploadVideo = mp.Process(name="processUploadVideo", 
-								   target=storage.uploadFile, 
-								   args=("rpi/vid/swingClip.mp4", 
-								   		 tsMiddle))
+									target=storage.uploadFile, 
+									args=("rpi/vid/swingClip.mp4",
+										"rpi/vid/swingClip.png", 
+									 		 tsMiddle))
 	processUploadVideo.daemon = True
 	processUploadVideo.start()
 
