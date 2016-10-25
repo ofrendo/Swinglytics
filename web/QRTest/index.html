@@ -1,13 +1,29 @@
 <html>
 	<head>
 		<title>Test QR code reader</title>
-		<script src="https://raw.githubusercontent.com/ofrendo/IS613APDLTPlaceholder/master/web/QRTest/node_modules/qrcode-reader/dist/index.js"></script>
+		<script src="node_modules/qrcode-reader/dist/index.js"></script>
+		<!-- <style>
+			#canvasHiddenQR {
+				display: none;
+			}
+		</style> -->
+		<script src="stationIDReader.js?i=3"></script>
 	</head>
 	<body>
 		<!-- html5 camera input -->
-		Camera input:
-		<input type="file" accept="image/*" capture="camera">
+		<select id="selectCameraInput"></select>
+		<video autoplay="true" id="videoCameraInput"></video>
+		<canvas id="canvasHiddenQR"></canvas>
+		<span id="spanQRResult">Result will appear here maybe...</span>
+		<script>
 
+StationIDReader.init({
+	selectCameraInputID: "#selectCameraInput",
+	videoCameraInputID: "#videoCameraInput",
+	spanQRResultID: "#spanQRResult"
+});
+StationIDReader.startReading();
 
+		</script>
 	</body>
 </html>

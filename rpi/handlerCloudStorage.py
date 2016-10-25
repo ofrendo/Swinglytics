@@ -7,12 +7,13 @@ from botocore.client import Config
 import json
 import requests
 from random import randint
+import ftplib
+
+from Crypto.Hash import SHA256
+from Crypto.PublicKey import RSA
+import binascii
 
 import golfConfig as conf
-import ftplib
-import json
-
-
 
 # constants
 BUCKET_NAME = "hopinone"
@@ -24,18 +25,40 @@ bucket = s3.Bucket(BUCKET_NAME)
 
 # see http://stackoverflow.com/questions/2673385/how-to-generate-random-number-with-the-specific-length-in-python
 def random_with_N_digits(n):
-    range_start = 10**(n-1)
-    range_end = (10**n)-1
-    return randint(range_start, range_end)
+	range_start = 10**(n-1)
+	range_end = (10**n)-1
+	return randint(range_start, range_end)
 
+def generateSignature(plaintext):
+	# SOURCE
+	# SHA256 of plaintext
+	h = SHA256.new()
+	h.update(bytes(plaintext, "utf-8"))
+	hash = h.hexdigest()
+	#print("Hash:", hash)
+
+	# http://stackoverflow.com/questions/21327491/using-pycrypto-how-to-import-a-rsa-public-key-and-use-it-to-encrypt-a-string
+	# Then encrypt hash with private key as signature
+	path = "/home/pi/.ssh/id_rsa_private.pem"
+	f = open(path, "r")
+	privKey = RSA.importKey(f.read())
+	encrypted = privKey.encrypt(bytes(hash, "utf-8"), "unneeded")[0]
+	result = str(binascii.hexlify(encrypted))[1:] #  the 1: removes "b" infront of string, because its a byte string http://stackoverflow.com/questions/17013089/python-get-rid-of-bytes-b
+	#result = encrypted.encode('hex') 
+
+	#print("Encrypted: ", result)
+	return result
+	# On server decrypt hash with public key
+	# generate hash of plaintext
+	# Compare: if same, valid signature
 
 # Sends a GET request for this station to check if a user is currently logged in
 def sendLoginCheck():
-	url = conf.SERVER_URL + "/api/v1/loginCheck/" + str(conf.STATION_ID)
+	url = conf.SERVER_URL + "/api/v1/checkuser/" + str(conf.STATION_ID)
 	response = requests.get(url)
 	body = response.json()
-	test = json.loads(body["data"])
-	return True
+	#print(body["userID"])
+	return body["userID"]
 
 
 def uploadFileAWS(filename, key):
@@ -59,42 +82,50 @@ def uploadFileFTP(filename, key):
 	dt = time.time() - startTime
 	print("[STORAGE] Uploaded file to FTP  in", dt)
 
-def uploadFile(filename, tsMiddle, loginCheck=True): 
+def uploadFile(videoName, thumbnailName, tsMiddle, loginCheck=True):
 	# Check if a user is logged in before submitting a video
 	userID = None
 	if (loginCheck == True):
 		userID = sendLoginCheck() 
-		print("[STORAGE] No user is currently logged in.")
 		if (userID == ""):
+			print("[STORAGE] No user is currently logged in.")
 			return
-
+		else:
+			print("[STORAGE] User", userID, "is logged in.")
+	else:
+		userID = "bob"
 
 	# Key is what the file will be named on the server, for example
 	# swingClip_{stationID}_{timestamp}_{random}.mp4
 	random = random_with_N_digits(5)
-	key = "swingClip_" + str(conf.STATION_ID) + "_" + str(int(tsMiddle)) + "_" + str(random) + ".mp4"
-
+	tsMiddle = int(tsMiddle)
+	keyVideo = "swingClip_" + str(conf.STATION_ID) + "_" + str(tsMiddle) + "_" + str(random) + ".mp4"
+	keyThumbnail = "swingClip" + str(conf.STATION_ID) + "_" + str(tsMiddle) + "_" + str(random) + ".png"
 	if conf.SERVER_USE_FTP == False:
-		uploadFileAWS(filename, key)
+		uploadFileAWS(videoName, keyVideo)
+		uploadFileAWS(thumbnailName, keyThumbnail)
 	else:
-		uploadFileFTP(filename, key)
+		uploadFileFTP(videoName, keyVideo)
+		uploadFileFTP(thumbnailName, keyThumbnail)
 
-
+	signature = generateSignature(str(conf.STATION_ID) + "_" + str(tsMiddle) + "_" + str(random))
 	url = conf.SERVER_URL + "/api/v1/video"
 	print("[STORAGE] Making POST request to ", url, "...")
 	payload = {
 		"userID": userID,
 		"stationID": conf.STATION_ID, 
 		"timestamp": tsMiddle,
-		"random": random}
+		"random": random,
+		"signature": signature
+	}
 	headers = {"content-type": "application/json"}
-	
 	response = requests.post(url, data=json.dumps(payload), headers=headers)
 	print("[STORAGE] Made POST request.")
-	data = response.json()
-	print(data)
-	data2 = json.loads(data["data"])
-	print(data2["stationID"])
+	print(response.text)
+	#data = response.json()
+	#print(data)
+	#data2 = json.loads(data["data"])
+	#print(data2["stationID"])
 
 
 if __name__ == '__main__':
@@ -104,4 +135,4 @@ if __name__ == '__main__':
 	if len(sys.argv)>1 and sys.argv[1] == "ftp":
 		conf.SERVER_USE_FTP = True
 
-	uploadFile("rpi/vid/swingClip.mp4", time.time(), False)
+	uploadFile("rpi/vid/swingClip.mp4", "rpi/vid/swingClip.png", time.time(), False)

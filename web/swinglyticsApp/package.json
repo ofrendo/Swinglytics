@@ -6,7 +6,11 @@
     "react-scripts": "0.6.1"
   },
   "dependencies": {
+    "eslintConfig": {
+      "extends": "react-app"
+    },
     "react": "^15.3.2",
+    "react-bootstrap": "^0.30.5",
     "react-dom": "^15.3.2"
   },
   "scripts": {

@@ -40,9 +40,9 @@ HANDLER_MIN_SWING_DELAY = 1
 
 ## Networking stuff
 STATION_ID = 1
-SERVER_URL = "http://httpbin.org" # test page, will return anything sent to it
+#SERVER_URL = "http://httpbin.org" # test page, will return anything sent to it
 #SERVER_URL = "http://138.68.108.39:3000" # digital ocean server
-#SERVER_URL = "192.168.178.76:3000" # desktop pc at home
+SERVER_URL = "http://192.168.178.76:3000" # desktop pc at home
 
 SERVER_USE_FTP = True # Should ftp be used for file upload? If false AWS will be used
 SERVER_FTP = "192.168.178.76" # desktop pc at home
