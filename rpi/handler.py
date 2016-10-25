@@ -4,7 +4,7 @@ import time
 import sys
 import subprocess
 
-from ffvideo import VideoStream
+from cv2 import VideoStream
 from camera import start_record
 from multi_camera import start_md
 from soundListenerUSB import start_listening
@@ -109,8 +109,8 @@ def createSwingClip(tsMiddle, cameraFilenameTS):
 
 	thumbnail = createThumbnail("rpi/vid/swingClip.mp4","rpi/vid/swingClip.png")
 	# Upload files in new subprocesses
-	processUploadVideo = mp.Process(name="processUploadVideo", 
-									target=storage.uploadFile, 
+	processUploadVideo = mp.Process(name="processUploadVideo",
+									target=storage.uploadFile,
 									args=("rpi/vid/swingClip.mp4",
 										"rpi/vid/swingClip.png", 
 									 		 tsMiddle))
@@ -160,9 +160,27 @@ def concatenateMP4(filename1, filename2):
 
 # https://bitbucket.org/zakhar/ffvideo/wiki/Home
 def createThumbnail(filename,target):
-	stream = VideoStream(filename)
-	frame = stream.get_frame_at_second(clipStartToMiddleDuration).image()
-	frame.save(target,format='PNG', optimize=True)
+	stream = cv2.VideoCapture(filename)
+	
+	# how long is the video
+	# time_length = clipStartToMiddleDuration + clipMiddleToEndDuration
+	# fps = conf.CAMERA_FRAMERATE
+	# frames_total = time_length  * fps
+	# which of the frames is the 
+	# thumbnail_frame = (frames_total / (clipStartToMiddleDuration * fps))
+
+	# calculate the middle frame of the video and deduct
+	thumbnail_frame = (clipStartToMiddleDuration * fps) - 1
+	# read the next frame
+	stream.set(2, thumbnail_frame)
+	ret, frame = stream.read()
+	# might be needed to show/store frame
+	cv2.waitKey()
+	cv2.imwrite(target,frame)
+	# stream = VideoStream(filename)
+	# frame = stream.get_frame_at_second(clipStartToMiddleDuration).image()
+	# frame.save(target,format='PNG', optimize=True)
+	stream.release()
 
 if __name__ == '__main__':
 	# Value: d for double precision float, b for boolean, i for int
