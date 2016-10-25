@@ -7,12 +7,13 @@ from botocore.client import Config
 import json
 import requests
 from random import randint
+import ftplib
+
+from Crypto.Hash import SHA256
+from Crypto.PublicKey import RSA
+import binascii
 
 import golfConfig as conf
-import ftplib
-import json
-
-
 
 # constants
 BUCKET_NAME = "hopinone"
@@ -28,6 +29,28 @@ def random_with_N_digits(n):
 	range_end = (10**n)-1
 	return randint(range_start, range_end)
 
+def generateSignature(plaintext):
+	# SOURCE
+	# SHA256 of plaintext
+	h = SHA256.new()
+	h.update(bytes(plaintext, "utf-8"))
+	hash = h.hexdigest()
+	print("Hash:", hash)
+
+	# http://stackoverflow.com/questions/21327491/using-pycrypto-how-to-import-a-rsa-public-key-and-use-it-to-encrypt-a-string
+	# Then encrypt hash with private key as signature
+	path = "C:/Users/D059373/.ssh/work_laptop_private.pem"
+	f = open(path, "r")
+	privKey = RSA.importKey(f.read())
+	encrypted = privKey.encrypt(bytes(hash, "utf-8"), "unneeded")[0]
+	result = binascii.hexlify(encrypted)
+
+
+	print("Encrypted: ", result)
+
+	# On server decrypt hash with public key
+	# generate hash of plaintext
+	# Compare: if same, valid signature
 
 # Sends a GET request for this station to check if a user is currently logged in
 def sendLoginCheck():
