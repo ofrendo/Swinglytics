@@ -4,6 +4,7 @@ import time
 import sys
 import subprocess
 
+from ffvideo import VideoStream
 from camera import start_record
 from multi_camera import start_md
 from soundListenerUSB import start_listening
@@ -106,14 +107,21 @@ def createSwingClip(tsMiddle, cameraFilenameTS):
 		concatenateMP4("rpi/vid/swingClipP1.mp4", "rpi/vid/swingClipP2.mp4")
 	# p.wait #sync
 
+	thumbnail = createThumbnail("rpi/vid/swingClip.mp4","rpi/vid/swingThumbnail.png")
+	# Upload files in new subprocesses
+	processUploadThumbnail = mp.Process(name="processUploadThumbnail",
+								target=storage.uploadFile,
+								args=("rpi/vid/swingThumbnail.png",
+										tsMiddle))
+	processUploadThumbnail.daemon = True
+	processUploadThumbnail.start()
 
-	# Upload file in new subprocess
-	processUploadFile = mp.Process(name="processUploadFile", 
+	processUploadVideo = mp.Process(name="processUploadVideo", 
 								   target=storage.uploadFile, 
 								   args=("rpi/vid/swingClip.mp4", 
 								   		 tsMiddle))
-	processUploadFile.daemon = True
-	processUploadFile.start()
+	processUploadVideo.daemon = True
+	processUploadVideo.start()
 
 	print("[HANDLER] Handler is listening...")
 
@@ -156,6 +164,11 @@ def concatenateMP4(filename1, filename2):
 	# Remove old file
 	#subprocess.call(["rm concat.txt"], shell=True)
 
+# https://bitbucket.org/zakhar/ffvideo/wiki/Home
+def createThumbnail(filename,target):
+	stream = VideoStream(filename)
+	frame = stream.get_frame_at_second(clipStartToMiddleDuration).image()
+	frame.save(target,format='PNG', optimize=True)
 
 if __name__ == '__main__':
 	# Value: d for double precision float, b for boolean, i for int

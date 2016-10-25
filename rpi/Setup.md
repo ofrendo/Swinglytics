@@ -2,7 +2,7 @@
 
 ## PIP 
 pip install imutils
-
+pip install Pillow
 ## APT-GET
 apt-get install python-opencv
 
