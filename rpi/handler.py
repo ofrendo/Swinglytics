@@ -4,7 +4,7 @@ import time
 import sys
 import subprocess
 
-from cv2 import VideoStream
+import cv2
 from camera import start_record
 from multi_camera import start_md
 from soundListenerUSB import start_listening
