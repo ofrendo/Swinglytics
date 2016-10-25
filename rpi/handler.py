@@ -4,15 +4,16 @@ import time
 import sys
 import subprocess
 
-# from camera import start_record
-from multi_camera import start_record
+from camera import start_record
+from multi_camera import start_md
 from soundListenerUSB import start_listening
 import golfConfig as conf
-# import handlerCloudStorage as storage
+import handlerCloudStorage as storage
 
 clipStartToMiddleDuration = 2.5
 clipMiddleToEndDuration = 2.5
 lastSwingRecorded = -1
+
 
 def printSwingConsoleMessage():
 	print("  ____          _                                          _          _ _ ")
@@ -25,17 +26,11 @@ def printSwingConsoleMessage():
 
 
 def createSwingClip(tsMiddle, cameraFilenameTS): 
-	global lastSwingRecorded
-	if tsMiddle - lastSwingRecorded <= conf.HANDLER_MIN_SWING_DELAY:
-		print("Too little time passed since last swing trigger")
-		return
-	lastSwingRecorded = time.time()
-
 	printSwingConsoleMessage()
 
 	# need to find appropriate file(s) to cut from with the help of tsMiddle
 	# for this use the shared array which saves when each file was started to be written
-	print("Swing ts:", tsMiddle)
+	print("[HANDLER] Swing ts:", tsMiddle)
 
 	# first check file that part of the clip must be in
 	# this file can either contain the complete clip (1), the first part (2) or the second part (3)
@@ -57,31 +52,31 @@ def createSwingClip(tsMiddle, cameraFilenameTS):
 	for i in range(len(cameraFilenameTS)): 
 		diffToFirstClipStart = tsMiddle - cameraFilenameTS[i]
 		if diffToFirstClipStart <= conf.CAMERA_CAP_LEN:
-			filename0 = conf.CAMERA_FILENAMES[(i-1) % len(conf.CAMERA_FILENAMES)]
-			filename1 = conf.CAMERA_FILENAMES[i]
-			filename2 = conf.CAMERA_FILENAMES[(i+1) % len(conf.CAMERA_FILENAMES)]
+			filename0 = conf.CAMERA_FILENAMES1[(i-1) % len(conf.CAMERA_FILENAMES1)]
+			filename1 = conf.CAMERA_FILENAMES1[i]
+			filename2 = conf.CAMERA_FILENAMES1[(i+1) % len(conf.CAMERA_FILENAMES1)]
 			break
 
 
 	# Next check which case we are in
-	print("Handler is sleeping (waiting for files to finish writing)...")
+	print("[HANDLER] Handler is sleeping (waiting for files to finish writing)...")
 	case = -1
 	if diffToFirstClipStart >= clipStartToMiddleDuration:
 		# Either (1) or (2)
 		if conf.CAMERA_CAP_LEN - diffToFirstClipStart >= clipMiddleToEndDuration:
 			# (1) ==> this file is sufficient 
 			# still need to wait for this cap to finish writing however
-			print("CASE1: no concat necessary: Using", filename1)
+			print("[HANDLER] CASE1: no concat necessary: Using", filename1)
 			case = 1
 			time.sleep(conf.CAMERA_CAP_LEN)
 		else:
 			# (2) ==> must retrieve something from the following clip
-			print("CASE2: retrieve something from following clip: Using", filename1, "and", filename2)
+			print("[HANDLER] CASE2: retrieve something from following clip: Using", filename1, "and", filename2)
 			case = 2
 			time.sleep(clipStartToMiddleDuration + conf.CAMERA_CAP_LEN)
 	else:
 		# (3) ==> we must retrieve something from the previous clip
-			print("CASE3: retrieve something from previous clip: Using", filename0, "and", filename1)
+			print("[HANDLER] CASE3: retrieve something from previous clip: Using", filename0, "and", filename1)
 			case = 3
 			time.sleep(conf.CAMERA_CAP_LEN)
 	
@@ -110,13 +105,20 @@ def createSwingClip(tsMiddle, cameraFilenameTS):
 		cutMP4(filename1, 0, diffToFirstClipStart + clipMiddleToEndDuration, "rpi/vid/swingClipP2.mp4")
 		concatenateMP4("rpi/vid/swingClipP1.mp4", "rpi/vid/swingClipP2.mp4")
 	# p.wait #sync
-	# storage.uploadFile("rpi/vid/swingClip.mp4", "swingClip.mp4")
 
 
-	print("Handler is listening...")
+	# Upload file in new subprocess
+	processUploadFile = mp.Process(name="processUploadFile", 
+								   target=storage.uploadFile, 
+								   args=("rpi/vid/swingClip.mp4", 
+								   		 tsMiddle))
+	processUploadFile.daemon = True
+	processUploadFile.start()
+
+	print("[HANDLER] Handler is listening...")
 
 def convertToMP4(filename):
-	print("Converting", filename, "to mp4...")
+	print("[HANDLER]  Converting", filename, "to mp4...")
 	# -y overwrite without asking
 	# -r define framerate: otherwise ffmpeg will use default 25fps
 	# -i input file
@@ -126,7 +128,7 @@ def convertToMP4(filename):
 
 def cutMP4(filename, start, duration, fileOutput):
 	filename = filename.replace("h264", "mp4")
-	print("Cutting", filename, "with start=", start, "and duration=", duration, "...")
+	print("[HANDLER] Cutting", filename, "with start=", start, "and duration=", duration, "...")
 	# -y overwrite without asking
 	# -ss [start] which point to start at
 	# -i input file
@@ -143,7 +145,7 @@ def cutMP4(filename, start, duration, fileOutput):
 def concatenateMP4(filename1, filename2):
 	filename1 = filename1.replace("h264", "mp4")
 	filename2 = filename2.replace("h264", "mp4")
-	print("Concatening", filename1, "and", filename2)
+	print("[HANDLER] Concatening", filename1, "and", filename2, "...")
 	# Create intermediate file
 	subprocess.call(["echo \"file '" + filename1 + "'\nfile '" + filename2 + "'\" > concat.txt"], shell=True)
 	# -y overwrite without asking
@@ -158,34 +160,47 @@ def concatenateMP4(filename1, filename2):
 if __name__ == '__main__':
 	# Value: d for double precision float, b for boolean, i for int
 	# Each value gives the timestamp when it last happened
-	triggerMotion = conf.CAMERA_TRIGGER_MOTION
+	triggerMotion1 = conf.CAMERA_TRIGGER_MOTION1
 	triggerSound = conf.SOUND_TRIGGER_SOUND
 
-	processCamera = mp.Process(name="processCamera", target=start_record, args=(2, triggerMotion, conf.CAMERA_FILENAMES_TS))
+	processCameraPi = mp.Process(name="processCameraPi", target=start_record, args=(triggerMotion1, conf.CAMERA_FILENAMES_TS1))
+	processCameraMD = mp.Process(name="processCameraMD", target=start_md, args=(2, triggerMotion1, conf.CAMERA_FILENAMES1, conf.CAMERA_FILENAMES_TS1))
+	#processSound = mp.Process(name="processSound", target=start_listening, args=(triggerSound, conf.PREP_FILE_LENGTH/60, 'rpi/sound/','.wav'))
 	processSound = mp.Process(name="processSound", target=start_listening, args=(triggerSound,))
 
-	processCamera.daemon = True
+	processCameraPi.daemon = True
+	processCameraMD.daemon = True
 	processSound.daemon = True
 
-	processCamera.start()
+	processCameraPi.start()
+	#processCameraMD.start()
 	processSound.start()
 
-	print("Handler is listening...")
-
+	print("[HANDLER] Handler is listening...")
+	
+	lastSwingRecorded = -1
 	while True:
 		# If the two triggers happen within a second of each other
-		if triggerMotion.value > 0 and triggerSound.value > 0 and abs(triggerMotion.value-triggerSound.value) <= 1:
-			# Use timestamp of sound to create x second clip with ffmpeg
-			createSwingClip(triggerSound.value, conf.CAMERA_FILENAMES_TS)
+		if (triggerMotion1.value > 0 and
+		   triggerSound.value > 0 and 
+		   abs(triggerMotion1.value-triggerSound.value) <= 1 
+		   ):
 
-			# Reset timestamps before cutting in case of false positives
-			triggerMotion.value = -1
+			if triggerSound.value - lastSwingRecorded > conf.HANDLER_MIN_SWING_DELAY:
+
+				# Use timestamp of sound to create x second clip with ffmpeg
+				createSwingClip(triggerSound.value, conf.CAMERA_FILENAMES_TS1)
+
+				# For prep: write timestamp to csv
+				#fd = open("swingDetections.csv", "a")
+				#fd.write(str(int(triggerSound.value)) + "\n")
+				#fd.close()
+
+				lastSwingRecorded = time.time()
+
+			# Reset timestamps after cutting in case of false positives
+			triggerMotion1.value = -1
 			triggerSound.value = -1
 
 		else:
 			time.sleep(0.1)
-
-
-	#print("Sleeping...")
-	#time.sleep(2)
-	#print("Done")

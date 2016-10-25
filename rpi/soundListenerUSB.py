@@ -18,7 +18,10 @@ def start_listening(triggerSound):
 	print("Starting to listen with threshold=", conf.SOUND_THRESHOLD)
 	print("##################################################################")
 
-	inp = alsaaudio.PCM(alsaaudio.PCM_CAPTURE)
+	# see alsaaudio.cards() for audio cards and alsaaudio.pcms() for param to give to .PCM()
+	# this selects the default card inp = alsaaudio.PCM(alsaaudio.PCM_CAPTURE, alsaaudio.PCM_NONBLOCK)
+	inp = alsaaudio.PCM(alsaaudio.PCM_CAPTURE, alsaaudio.PCM_NONBLOCK, "sysdefault:CARD=Audio")
+
 	inp.setchannels(1)
 	inp.setrate(44100)
 	inp.setformat(alsaaudio.PCM_FORMAT_S16_LE)
@@ -31,7 +34,7 @@ def start_listening(triggerSound):
 		val = numpy.abs(a).mean()
 		if val > conf.SOUND_THRESHOLD:
 			triggerSound.value = time.time()
-			print("Sound trigger", val, " at ", triggerSound.value)
+			print("[SOUND] Sound trigger", val, " at ", triggerSound.value)
 
 
 

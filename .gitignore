@@ -1,15 +1,24 @@
 # Raspbery pi
 __pycache__
 *.pyc
-rpi/vid/
+rpi/vid/*.mp4
+rpi/vid/*.h264
+*.avi
+*.png
+*.wav
+*.csv
 concat.txt
+rpi/prep
 
 
 # Server
-
+server/node_modules
+server/server-account.json
 
 
 
 # Web
 # web/QRTest/node_modules
 
+# Storage
+storage/*.mp4
