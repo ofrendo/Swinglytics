@@ -12,6 +12,7 @@ import '../ui/pages/login.html';
 import '../ui/pages/register.html';
 import '../ui/pages/navigationDemo.html';
 import '../ui/pages/swingCollection.html';
+import '../ui/pages/video.html';
 
 import '../ui/pages/onboarding1.html';
 import '../ui/pages/onboarding2.html';
@@ -88,5 +89,12 @@ FlowRouter.route('/swingCollection', {
   name: "Initial",
   action() {
     BlazeLayout.render('LayoutTmpl',  {main: 'swingCollectionTemplate'} )
+  }
+})
+
+FlowRouter.route('/video', {
+  name: "Initial",
+  action() {
+    BlazeLayout.render('LayoutTmpl',  {main: 'videoTemplate'} )
   }
 })
