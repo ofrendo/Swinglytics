@@ -94,13 +94,11 @@ mkdir ~/.aws
 touch ~/.aws/credentials
 vim ~/.aws/credentials
 [default]
-aws_access_key_id=AKIAJPIIA2BZ4J5P5ZDQ
-aws_secret_access_key=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
+Hah, not posting them again
 
 # web login
 https://is613dt.signin.aws.amazon.com/console
-raspberrypi
-is613dt
+Hah, not posting them again
 
 
 
