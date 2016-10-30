@@ -12,7 +12,8 @@ rpi/prep
 
 
 # Server
-
+server/node_modules
+server/server-account.json
 
 
 # Web
