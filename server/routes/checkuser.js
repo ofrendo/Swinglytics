@@ -2,7 +2,6 @@
 var express   = require('express');
 var app       = express();
 var router    = express.Router();
-var firebase = require('../firebaseinit');
 
 
 //Check Current User @ Station

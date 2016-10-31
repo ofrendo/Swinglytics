@@ -1,7 +1,0 @@
-{
-"version": 3,
-"mappings": ";;;;;AAMA,KAAM;EACJ,OAAO,EAAE,KAAK;EACd,UAAU,EAAE,IAAI;EAChB,OAAO,EAAE,KAAK;EACd,UAAU,EAAE,OAAO;EACnB,wBAAwB,EAAE,IAAI;;AAGhC;;;kBAGmB;EACjB,KAAK,EAAE,KAAK;;AAGd;;;;;;;;;;;;;;;;;;;;;;;;;6BAyB8B;EAC5B,KAAK,EAAE,IAAI;;AAGb;;;;;;0BAM2B;EACzB,KAAK,EAAE,IAAI;;AAGb;;;;;;;;;;;;;;wBAcyB;EACvB,KAAK,EAAE,IAAI;;AAGb;;;;;;;;;;;;;;;;;;;;;;;;;;;;WA4BY;EACV,KAAK,EAAE,IAAI;;AAGb;;;;;;;;;;;;;;;;;;;YAmBa;EACX,WAAW,EAAE,IAAI;;AAGnB;wBACyB;EACvB,UAAU,EAAE,MAAM;;AAGpB,qBAAsB;EACpB,WAAW,EAAE,MAAM;;AAGrB;;;;;;;gBAOiB;EACf,OAAO,EAAE,GAAG",
-"sources": ["../_default.scss"],
-"names": [],
-"file": "docs.css"
-}
