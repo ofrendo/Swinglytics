@@ -25,13 +25,6 @@ router.post('/', function(req, res) {
   var body_random = body.random;
   var body_signature = body.signature;
 
-  // Check if logged in
-  if (!req.isAuthenticated()) {
-    console.log("[POST /video] User is NOT logged in!");
-    res.status(403).send("");
-    return;
-  }
-
   //Check Parameters
   if (body_userid == undefined || body_stationid == undefined || body_timestamp== undefined || body_random== undefined || body_signature== undefined) {
     console.log("[POST /video] One or more parameters is missing.");
