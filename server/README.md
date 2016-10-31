@@ -1,3 +1,10 @@
+# Connecting to Digital Ocean and starting the server
+```
+ssh root@{{IPAddress}}
+cd server
+nodejs server.js
+```
+
 # API documentation
 All calls are prefixed with `/api/v1/`.
 
