@@ -67,10 +67,25 @@ Output:
 ```
 
 ```
-GET /user/videos
+GET /user/videos [requires login]
 
 Output:
 200 With array of videos, each a JSON object {videoID, rating, tags}
 403 If not logged in
 500 Internal server error
 ```
+
+
+```
+POST /user/startSession/:stationID [requires login]
+
+TODO (not implemented yet)
+```
+
+```
+POST /user/endSession/:stationID [requires login]
+
+TODO (not implemented yet)
+```
+
+
