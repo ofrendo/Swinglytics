@@ -12,7 +12,10 @@ All calls are prefixed with `/api/v1/`.
 ```
 GET /checkuser/:stationid
 
-TBD
+Output:
+200 With "" if no user is logged in or {userID} if one is logged in
+404 No stationID found
+500 Internal server error
 ```
 
 
@@ -79,13 +82,19 @@ Output:
 ```
 POST /user/startSession/:stationID [requires login]
 
-TODO (not implemented yet)
+Output: 
+200 OK
+404 No stationID found
+500 Internal server error
 ```
 
 ```
 POST /user/endSession/:stationID [requires login]
 
-TODO (not implemented yet)
+Output: 
+200 OK
+404 No stationID found
+500 Internal server error
 ```
 
 
