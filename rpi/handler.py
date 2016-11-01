@@ -170,7 +170,7 @@ def createThumbnail(filename,target):
 	# thumbnail_frame = (frames_total / (clipStartToMiddleDuration * fps))
 
 	# calculate the middle frame of the video and deduct
-	thumbnail_frame = (clipStartToMiddleDuration * fps) - 1
+	thumbnail_frame = (clipStartToMiddleDuration * conf.CAMERA_FRAMERATE) - 1
 	# read the next frame
 	stream.set(2, thumbnail_frame)
 	ret, frame = stream.read()
