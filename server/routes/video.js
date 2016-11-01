@@ -19,14 +19,9 @@ var publickey;
 //Rasperry posts a Video
 router.post('/', function(req, res) {
   var body = req.body;
-  var body_userid = body.userID;
-  var body_stationid = body.stationID;
-  var body_timestamp = body.timestamp;
-  var body_random = body.random;
-  var body_signature = body.signature;
 
   //Check Parameters
-  if (body_userid == undefined || body_stationid == undefined || body_timestamp== undefined || body_random== undefined || body_signature== undefined) {
+  if (body.userID == undefined || body.stationID == undefined || body.timestamp== undefined || body.random== undefined || body.signature== undefined) {
     console.log("[POST /video] One or more parameters is missing.");
     res.status(400).send("");
     return;
@@ -62,7 +57,7 @@ router.post('/', function(req, res) {
   console.log('Encrypted:\n', msg, '\n'); */
 
   // If signature correct, push to mongoDB
-  User.findOne({'username': body_userid}, function(err, user) {
+  User.findOne({'username': body.userID}, function(err, user) {
     // In case of any error return
     if (err){
       console.log('[POST /video] Error in finding userID while pushing video: '+err);
@@ -70,13 +65,28 @@ router.post('/', function(req, res) {
       return;
     }
     if (!user) {
-      console.log("[POST /video] User with userID=" + body_userid + " not found");
+      console.log("[POST /video] User with userID=" + body.userID + " not found");
       res.status(404).send("");
     }
     else {
-      console.log("[POST /video] User with userID=" + body_userid + " has " + user.videos.length + " videos stored.");
-      user.videos.push({
-        videoID: body_stationid + "_" + body_timestamp + "_" + body_random,
+      console.log("[POST /video] User with userID=" + body.userID + " has " + user.sessions.length + " sessions stored.");
+
+      // find the correct session to push the video to: the one with max timestamp
+      var maxTS = -1;
+      var latestSession = null;
+      for (var i=0;i<user.sessions.length;i++) {
+        var session = user.sessions[i];
+        // sessionID is {stationID}_{timestamp}
+        var ts = Number(session.sessionID.split("_")[1]);
+        if (ts > maxTS) {
+          maxTS = ts;
+          latestSession = session;
+        }
+      }
+
+      // Once it is found, push a new video to it
+      session.videos.push({
+        videoID: body.stationID + "_" + body.timestamp + "_" + body.random,
         rating: 5,
         tags: ""
       });

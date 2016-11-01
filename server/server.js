@@ -6,6 +6,7 @@ var flash = require('connect-flash');
 var mongoose = require('mongoose');
 var passport = require('passport');
 
+
 var dbConfig = require('./db.js');
 
 
@@ -33,10 +34,13 @@ app.use(expressSession({secret: 'mySecretKey'}));
 app.use(passport.initialize());
 app.use(passport.session())
 
+require("./initPassport.js");
+
 
 
 
 //API Routing
+app.use("/api/v1/station", require("./routes/station"));
 app.use('/api/v1/video', require('./routes/video')); // includes POST /
 app.use('/api/v1/checkuser', require('./routes/checkuser')); // includes GET / (call for rpi to check if anyone is currently logged in)
 app.use('/api/v1/user', require('./routes/user')); // includes POST /login, POST /register, GET /videos

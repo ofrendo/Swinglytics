@@ -8,12 +8,17 @@ var userSchema = new schema({
   email: String,
   firstname: String,
   lastname: String,
-  videos: [
-  	{
-  		videoID: String,
-  		rating: Number,
-  		tags: String
-  	}
+  sessions: [
+    {
+      sessionID: String, // sessionID is {stationID}_{timestamp (login)}
+      videos: [
+        {
+          videoID: String, // videoID is {stationID}_{timestamp (swing)}_{random}
+          rating: Number,
+          tags: String
+        }
+      ]
+    }
   ]
 });
 

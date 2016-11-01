@@ -35,20 +35,26 @@ class App extends Component {
    console.log("Email: " + email);
    console.log("Password: " + password);
 
-   firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password).catch(function(error) {
-     firebase.auth().onAuthStateChanged(function(user) {
-      if (user) {
-        console.log("Signed in user has the following email: " + user.email);
-        // User is signed in.
-        const path = '/dashboard';
-        browserHistory.push(path);
-
-      } else {
-        // No user is signed in.
-        console.log("User is NOT logged in. NOT moving to dashboard...");
-      }
-    });
-   });
+  fetch("server/login", {  
+    method: "post",  
+    //mode: 'cors', 
+    headers: {  
+      "Content-type": "application/json"  
+    },  
+    body: {
+      "email": email,
+      "password": password
+    }
+  })
+  .then(json)  
+  .then(function (data) {  
+    console.log('Request succeeded with JSON response', data);  
+    //const path = '/dashboard';
+    //browserHistory.push(path);
+  })  
+  .catch(function (error) {  
+    console.log('Request failed', error);  
+  });
 
  }
 
