@@ -1,7 +1,7 @@
 {
   "name": "swinglytics",
   "version": "1.0.0",
-  "description": "",
+  "description": "Server middleware for Swinglytics",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -9,8 +9,15 @@
   "author": "Domenik Fox",
   "license": "ISC",
   "dependencies": {
+    "bcrypt-nodejs": "0.0.3",
     "body-parser": "^1.15.2",
+    "connect-flash": "^0.1.1",
     "express": "^4.14.0",
-    "firebase": "^3.5.1"
+    "express-session": "^1.14.2",
+    "js-sha256": "^0.3.2",
+    "mongoose": "^4.6.5",
+    "node-rsa": "^0.4.2",
+    "passport": "^0.3.2",
+    "passport-local": "^1.0.0"
   }
 }

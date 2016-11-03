@@ -21,3 +21,5 @@ server/server-account.json
 
 # Storage
 storage/*.mp4
+storage/mongodb
+!storage/mongodb/.gitkeep

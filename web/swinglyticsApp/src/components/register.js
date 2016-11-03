@@ -1,20 +1,21 @@
-import React, { Component } from 'react';
-import './App.css';
+import React from 'react';
+import '../App.css';
 import { Grid, Row, Col, FormGroup, ControlLabel, FormControl, Button, Form} from 'react-bootstrap';
 import * as firebase from 'firebase';
 import { browserHistory } from 'react-router'
 
 
-class App extends Component {
+class RegisterPage extends React.Component {
   constructor(props) {
    super(props);
    this.state = {
      email: '',
-     password: ''
-   };
+     password: '',
+     registerMessage: ''
+   }
    this.handleEmailChange = this.handleEmailChange.bind(this);
    this.handlePasswordChange = this.handlePasswordChange.bind(this);
-   this.handleLogin = this.handleLogin.bind(this);
+   this.handleRegister = this.handleRegister.bind(this);
  }
 
   handleEmailChange(event) {
@@ -26,35 +27,34 @@ class App extends Component {
    this.setState({password: event.target.value});
  }
 
+ handleRegister(){
+   console.log("handleRegister was called")
 
- handleLogin(){
-   console.log("handleLogin was called")
-
+   var self = this;
    var email = this.state.email;
    var password = this.state.password;
    console.log("Email: " + email);
    console.log("Password: " + password);
 
-  fetch("server/login", {  
-    method: "post",  
-    //mode: 'cors', 
-    headers: {  
-      "Content-type": "application/json"  
-    },  
-    body: {
-      "email": email,
-      "password": password
-    }
-  })
-  .then(json)  
-  .then(function (data) {  
-    console.log('Request succeeded with JSON response', data);  
-    //const path = '/dashboard';
-    //browserHistory.push(path);
-  })  
-  .catch(function (error) {  
-    console.log('Request failed', error);  
-  });
+   firebase.auth().createUserWithEmailAndPassword(email, password).catch(function(error) {
+     var errorMessage = error.message;
+     firebase.auth().onAuthStateChanged(function(user) {
+      if (user) {
+        console.log("User creation was successful");
+        // User is signed in.
+        const path = '/welcome';
+        browserHistory.push(path);
+
+      }
+      else {
+        // User creation failed
+        var message = errorMessage
+        console.log(message);
+        self.setState({registerMessage: message});
+      }
+    });
+
+});
 
  }
 
@@ -74,7 +74,7 @@ class App extends Component {
                 </Col>
               </Row>
             </div>
-            <div className="form-type-highlight"></div>
+            <div className="form-type-highlight-reverse"></div>
             <div className="login-body">
               <Row>
                 <Col xs={12}>
@@ -98,11 +98,12 @@ class App extends Component {
                     </FormGroup>
                     <FormGroup>
                       <Col className="text-center">
-                        <Button type="button" className="btn-mobile" onClick={this.handleLogin}>
-                          Login
+                        <Button type="button" className="btn-mobile" onClick={this.handleRegister}>
+                          Register
                         </Button>
                       </Col>
                     </FormGroup>
+                    <div className="text-center">{ this.state.registerMessage }</div>
                   </Form>
                 </Col>
               </Row>
@@ -116,4 +117,4 @@ class App extends Component {
 
 }
 
-export default App;
+export default RegisterPage;
