@@ -160,7 +160,6 @@ def concatenateMP4(filename1, filename2):
 	#subprocess.call(["rm concat.txt"], shell=True)
 
 # https://bitbucket.org/zakhar/ffvideo/wiki/Home
-<<<<<<< HEAD
 def createThumbnail(filename):
 	target = filename.replace("mp4", "png")
 	# get the duration of the provided video file and take the screenshot 1 second after half of the duration
@@ -173,30 +172,6 @@ def createThumbnail(filename):
 		timeString = '00:00:' + str(round(time)) + '.00'
 	# create the screenshot
 	subprocess.call(["ffmpeg -i " + filename + " -ss " + timeString +" -vframes 1 " + target], shell=True)
-=======
-def createThumbnail(filename,target):
-	stream = cv2.VideoCapture(filename)
-	
-	# how long is the video
-	# time_length = clipStartToMiddleDuration + clipMiddleToEndDuration
-	# fps = conf.CAMERA_FRAMERATE
-	# frames_total = time_length  * fps
-	# which of the frames is the 
-	# thumbnail_frame = (frames_total / (clipStartToMiddleDuration * fps))
-
-	# calculate the middle frame of the video and deduct
-	thumbnail_frame = (clipStartToMiddleDuration * conf.CAMERA_FRAMERATE) - 1
-	# read the next frame
-	stream.set(2, thumbnail_frame)
-	ret, frame = stream.read()
-	# might be needed to show/store frame
-	cv2.waitKey()
-	cv2.imwrite(target,frame)
-	# stream = VideoStream(filename)
-	# frame = stream.get_frame_at_second(clipStartToMiddleDuration).image()
-	# frame.save(target,format='PNG', optimize=True)
-	stream.release()
->>>>>>> 06c932c7680d6d9fa7eb72a043d527bad5b3d6e4
 
 if __name__ == '__main__':
 	# Value: d for double precision float, b for boolean, i for int
