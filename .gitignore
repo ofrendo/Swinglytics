@@ -10,11 +10,19 @@ rpi/vid/*.h264
 concat.txt
 rpi/prep
 
+# dependencies
+node_modules
+
+# production
+build
+
+# misc
+.DS_Store
+npm-debug.log
 
 # Server
 server/node_modules
 server/server-account.json
-
 
 # Web
 # web/QRTest/node_modules
@@ -23,3 +31,6 @@ server/server-account.json
 storage/*.mp4
 storage/mongodb
 !storage/mongodb/.gitkeep
+
+# ignore generated data
+manifest.js
