@@ -10,12 +10,6 @@ rpi/vid/*.h264
 concat.txt
 rpi/prep
 
-# dependencies
-node_modules
-
-# production
-build
-
 # misc
 .DS_Store
 npm-debug.log
@@ -32,5 +26,3 @@ storage/*.mp4
 storage/mongodb
 !storage/mongodb/.gitkeep
 
-# ignore generated data
-manifest.js
