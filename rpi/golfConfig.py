@@ -38,6 +38,11 @@ AUDIO_FILENAMES = ("rpi/vid/cap1_1" + AUDIO_ENDING,
              "rpi/vid/cap1_4" + AUDIO_ENDING)
 AUDIO_FILENAMES_TS = mp.Array("d", [-1, -1, -1, -1])
 
+## Motion Detection Stuff
+MOTION_X_MIN = 75
+MOTION_X_MAX = 225
+MOTION_Y_MIN = 25
+MOTION_Y_MAX = 200
 
 ## Handler stuff
 HANDLER_MIN_SWING_DELAY = 1
