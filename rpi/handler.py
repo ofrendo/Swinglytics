@@ -173,6 +173,11 @@ def createThumbnail(filename):
 	# create the screenshot
 	subprocess.call(["ffmpeg -i " + filename + " -ss " + timeString +" -vframes 1 " + target], shell=True)
 
+def combineMP4withWAV(videoname, soundname):
+	# -itsoffset 00:00:00.00 to delay audio
+	# -vcodec & -acodec define video and audio codec used
+	subprocess.call(['ffmpeg -i ' + videoname + ' -i ' + soundname + ' rpi/vid/swingClip.mp4'], shell = True)
+
 if __name__ == '__main__':
 	# Value: d for double precision float, b for boolean, i for int
 	# Each value gives the timestamp when it last happened
@@ -182,6 +187,7 @@ if __name__ == '__main__':
 	processCameraMD = mp.Process(name="processCameraMD", target=start_md, args=(2, triggerMotion1, conf.CAMERA_FILENAMES1, conf.CAMERA_FILENAMES_TS1))
 	#processSound = mp.Process(name="processSound", target=start_listening, args=(triggerSound, conf.PREP_FILE_LENGTH/60, 'rpi/sound/','.wav'))
 	processSound = mp.Process(name="processSound", target=start_listening, args=(triggerSound,))
+	# processSound = mp.Process(name="processSound", target=start_listening, args=(triggerSound, conf.AUDIO_FILENAMES_TS))
 
 	# processCameraPi.daemon = True
 	processCameraMD.daemon = True
