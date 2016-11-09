@@ -37,7 +37,12 @@ app.use(passport.session())
 require("./initPassport.js");
 
 
-
+app.all('/*', function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "http://localhost:3001");
+  res.header("Access-Control-Allow-Headers", "X-Requested-With");
+  res.header("Access-Control-Allow-Credentials", "true");
+  next();
+});
 
 //API Routing
 app.use("/api/v1/station", require("./routes/station"));
@@ -46,9 +51,11 @@ app.use('/api/v1/checkuser', require('./routes/checkuser')); // includes GET / (
 app.use('/api/v1/user', require('./routes/user')); // includes POST /login, POST /register, GET /videos
 
 app.get("/authSuccess", function(req, res){
+	//console.log("/authSuccess");
 	res.status(200).send("");
 });
 app.get("/authFailure", function(req, res) {
+	//console.log("/authFailure");
 	res.status(403).send("");
 });
 
