@@ -5,6 +5,8 @@ var bodyParser = require('body-parser');
 var flash = require('connect-flash');
 var mongoose = require('mongoose');
 var passport = require('passport');
+var https = require("https");
+var fs = require("fs");
 
 
 var dbConfig = require('./db.js');
@@ -36,7 +38,7 @@ app.use(passport.session())
 
 require("./initPassport.js");
 
-
+// Allow requests to come from other domains
 app.all('/*', function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "http://localhost:3001");
   res.header("Access-Control-Allow-Headers", "X-Requested-With");
@@ -59,11 +61,33 @@ app.get("/authFailure", function(req, res) {
 	res.status(403).send("");
 });
 
+// For offline use case: allow videos uploaded to the ../storage directory to be accessed
+app.use('/ftp', express.static('../storage'))
 
 
 //Start NodeJS Server
 var port = 3000; //Change Port here
-app.listen(port);
-console.log('[SERVER] API is running on port: ' + port);
+
+// Check if https should be used: command line arg --ssl
+var argv = require('minimist')(process.argv.slice(2));
+console.log(argv)
+if (argv.ssl === true) {
+	var options = {
+	    //key: fs.readFileSync('./id_rsa_private.pem'),
+	    key: fs.readFileSync('../web/QRTest/server.key'),
+	    //cert: fs.readFileSync('./id_rsa.pem')
+	    cert: fs.readFileSync('../web/QRTest/server.crt')
+	};
+	var server = https.createServer(options, app).listen(port, function(){
+		console.log('[SERVER] HTTPS API is running on port: ' + port);
+	});
+}
+else {
+	app.listen(port);
+	console.log('[SERVER] HTTP API is running on port: ' + port);
+}
+
+
+
 
 
