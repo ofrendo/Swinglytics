@@ -32,7 +32,10 @@ mongoose.connect(dbConfig.url);
 
 
 // Configuring Passport
-app.use(expressSession({secret: 'mySecretKey'}));
+app.use(expressSession({
+	secret: 'mySecretKey'
+	//, cookie: { domain: 'localhost'}
+}));
 app.use(passport.initialize());
 app.use(passport.session())
 
@@ -70,11 +73,12 @@ var port = 3000; //Change Port here
 
 // Check if https should be used: command line arg --ssl
 var argv = require('minimist')(process.argv.slice(2));
-console.log(argv)
+
 if (argv.ssl === true) {
 	var options = {
 	    //key: fs.readFileSync('./id_rsa_private.pem'),
-	    key: fs.readFileSync('../web/QRTest/server.key'),
+	    //key: fs.readFileSync('../web/QRTest/server.key'),
+	    //key: fs.readFileSync("")
 	    //cert: fs.readFileSync('./id_rsa.pem')
 	    cert: fs.readFileSync('../web/QRTest/server.crt')
 	};
