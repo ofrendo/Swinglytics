@@ -39,10 +39,12 @@ AUDIO_FILENAMES = ("rpi/vid/cap1_1" + AUDIO_ENDING,
 AUDIO_FILENAMES_TS = mp.Array("d", [-1, -1, -1, -1])
 
 ## Motion Detection Stuff
-MOTION_X_MIN = 75
-MOTION_X_MAX = 225
-MOTION_Y_MIN = 25
-MOTION_Y_MAX = 200
+height = 304 * 0.75 # 75% takes the rescaling of the frame into consideration
+width = 400 * 0.75 # 75% takes the rescaling of the frame into consideration
+MOTION_X_MIN = int(width * 0.25) #75
+MOTION_X_MAX = int(width * 0.75) #225
+MOTION_Y_MIN = int(height * 0.1) #25
+MOTION_Y_MAX = int(height * 0.9) #200
 
 ## Handler stuff
 HANDLER_MIN_SWING_DELAY = 1
