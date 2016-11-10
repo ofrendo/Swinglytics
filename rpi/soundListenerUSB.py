@@ -12,6 +12,7 @@ import numpy
 import time
 import wave
 import struct
+import audioop
 from sys import byteorder
 from array import array
 import multiprocessing as mp
@@ -31,10 +32,10 @@ def start_listening(triggerSound):
 	# see alsaaudio.cards() for audio cards and alsaaudio.pcms() for param to give to .PCM()
 	# this selects the default card inp = alsaaudio.PCM(alsaaudio.PCM_CAPTURE, alsaaudio.PCM_NONBLOCK)
 	inp = alsaaudio.PCM(alsaaudio.PCM_CAPTURE, alsaaudio.PCM_NONBLOCK) #, "sysdefault:CARD=Audio"
-	inp.setchannels(1)
-	inp.setrate(44100)
+	inp.setchannels(conf.SOUND_CHANNELS)
+	inp.setrate(conf.SOUND_RATE)
 	inp.setformat(alsaaudio.PCM_FORMAT_S16_LE)
-	inp.setperiodsize(1024)
+	inp.setperiodsize(conf.SOUND_CHUNKSIZE)
 
 	while(True):
 		l, data = inp.read()
@@ -46,25 +47,25 @@ def start_listening(triggerSound):
 			print("[SOUND] Sound trigger", val, " at ", triggerSound.value)
 
 def start_recording(triggerSound, audioFilenameTS):
-	CHUNKSIZE = 1024
-	FORMAT = pyaudio.paInt16
-	RATE = 44100
-	CHANNELS = 1
+	chunksize = conf.SOUND_CHUNKSIZE
+	format = pyaudio.paInt16
+	rate = conf.SOUND_RATE
+	channels = conf.SOUND_CHANNELS
 	p = pyaudio.PyAudio()
-	stream = p.open(format = FORMAT, channels = CHANNELS, rate = RATE, input = True, output = True, frames_per_buffer = CHUNKSIZE)
+	stream = p.open(format = format, channels = channels, rate = rate, input = True, output = True, frames_per_buffer = chunksize)
 	for filename in conf.AUDIO_FILENAMES:
 		print("########################### AUDIO ##############################")
 		print("Recording to file: " + filename)
 		print("#################################################################")
 		data_all = array('h')
-		blocks = int(RATE * conf.AUDIO_DURATION_SECONDS / CHUNKSIZE)
+		blocks = int(rate * conf.AUDIO_DURATION_SECONDS / chunksize)
 		for i in range(0, blocks):
 			# ignoring overflow of array based on reading too slow from the input
-			data_chunk = array('h', stream.read(CHUNKSIZE, exception_on_overflow = False))
+			data_chunk = array('h', stream.read(chunksize, exception_on_overflow = False))
 			if byteorder == 'big':
 				data_chunk.byteswap()
 			data_all.extend(data_chunk)
-			val = max(data_chunk)
+			val = audioop.rms(data_chunk, 2)
 
 			if val > conf.SOUND_THRESHOLD:
 				triggerSound.value = time.time()
@@ -73,20 +74,16 @@ def start_recording(triggerSound, audioFilenameTS):
 				print("[SOUND] Sound trigger", val, " at ", triggerSound.value)
 
 		w = wave.open(filename, 'w')
-		w.setnchannels(1)
+		w.setnchannels(channels)
 		w.setsampwidth(2)
-		w.setframerate(44100)
-		w.setnframes(conf.AUDIO_DURATION_SECONDS * 44100)
+		w.setframerate(rate)
+		w.setnframes(conf.AUDIO_DURATION_SECONDS * rate)
 		w.writeframes(data_all)
 		w.close()
-
-
-
-
 
 if __name__ == '__main__':
 	# Only executed if explicitely calling this file: use for testing purposes
 
-	start_listening(conf.SOUND_TRIGGER_SOUNDS)
-	# start_recording(conf.SOUND_TRIGGER_SOUNDS, conf.AUDIO_FILENAMES_TS)
+	# start_listening(conf.SOUND_TRIGGER_SOUND)
+	start_recording(conf.SOUND_TRIGGER_SOUND, conf.AUDIO_FILENAMES_TS)
    
