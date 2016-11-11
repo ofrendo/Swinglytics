@@ -592,7 +592,7 @@ i{color: #555;}
   font-weight: 100;
   color: #888;
   padding-left: 3px;
-  padding-right: 3px;
+  padding-right: 5px;
 }
 
 .session-date{
@@ -645,7 +645,7 @@ i{color: #555;}
 .video-controls button{
   border: 0px;
   border-radius: 0px !important;
-  width: 80px;
+  width: 20%;
   height: 45px;
   box-sizing: border-box !important;
 }
@@ -656,6 +656,10 @@ i{color: #555;}
 }
 
 .btn-repeat{
+  background: #2196f3 !important;
+}
+
+.btn-favorite{
   background: #2196f3 !important;
 }
 
@@ -710,7 +714,7 @@ i{color: #555;}
   box-sizing: border-box !important;
 }
 .video-menu-options button{
-  width: 150px;
+  width: 33.33%;
   border: 0px;
   border-radius: 0px !important;
   height: 45px;
@@ -723,13 +727,13 @@ i{color: #555;}
 
 
 .fa-star-o-cust{
-  color: orange;
-  font-size: 30px;
+  color: #ffc107;
+  font-size: 25px;
 }
 
 .fa-star-cust{
-  color: orange;
-  font-size: 30px;
+  color: #ffc107;
+  font-size: 25px;
 }
 
 .favorite-hover{
@@ -757,4 +761,57 @@ i{color: #555;}
 
 .video-container{
   height: 101vh;
+}
+
+.session-tag-menu{
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  box-sizing: border-box !important;
+}
+
+.session-tag-menu button{
+  width: 33.33%;
+  border: 0px;
+  border-radius: 0px !important;
+  height: 45px;
+  background: white;
+  &:active:focus{outline: 0;}
+  &:focus{outline: 0;}
+  &:hover{outline: 0;}
+}
+
+.session-tag-menu span{
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+
+.tag-highlight-good span{
+  border-bottom: 1px solid #4caf50;
+}
+
+.tag-highlight-bad span{
+  border-bottom: 1px solid #f44336;
+}
+
+.tag-highlight-great span{
+  border-bottom: 1px solid #e91e63;
+}
+
+.tag-highlight-posture span{
+  border-bottom: 1px solid #ffc107;
+}
+
+.tag-highlight-angle span{
+  border-bottom: 1px solid #2196f3;
+}
+
+.tag-highlight-feet span{
+  border-bottom: 1px solid #673ab7;
+}
+
+.fa-play-session{
+  font-size: 25px;
+  color: #2196f3
 }
