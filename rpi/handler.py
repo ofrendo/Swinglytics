@@ -6,7 +6,7 @@ import subprocess
 import struct
 
 import cv2
-# from camera import start_record
+from camera import start_record
 from multi_camera import start_md
 from soundListenerUSB import start_listening, start_recording
 import golfConfig as conf
@@ -191,18 +191,18 @@ if __name__ == '__main__':
 	# Each value gives the timestamp when it last happened
 	triggerMotion1 = conf.CAMERA_TRIGGER_MOTION1
 	triggerSound = conf.SOUND_TRIGGER_SOUND
-	# processCameraPi = mp.Process(name="processCameraPi", target=start_record, args=(triggerMotion1, conf.CAMERA_FILENAMES_TS1))
+	processCameraPi = mp.Process(name="processCameraPi", target=start_record, args=(triggerMotion1, conf.CAMERA_FILENAMES_TS1))
 	processCameraMD = mp.Process(name="processCameraMD", target=start_md, args=(2, triggerMotion1, conf.CAMERA_FILENAMES1, conf.CAMERA_FILENAMES_TS1))
 	#processSound = mp.Process(name="processSound", target=start_listening, args=(triggerSound, conf.PREP_FILE_LENGTH/60, 'rpi/sound/','.wav'))
-	# processSound = mp.Process(name="processSound", target=start_listening, args=(triggerSound,))
-	processSound = mp.Process(name="processSound", target=start_recording, args=(triggerSound, conf.AUDIO_FILENAMES_TS))
+	processSound = mp.Process(name="processSound", target=start_listening, args=(triggerSound,))
+	#processSound = mp.Process(name="processSound", target=start_recording, args=(triggerSound, conf.AUDIO_FILENAMES_TS))
 
 	# processCameraPi.daemon = True
 	processCameraMD.daemon = True
 	processSound.daemon = True
 	
-	# processCameraPi.start()
-	processCameraMD.start()
+	processCameraPi.start()
+	#processCameraMD.start()
 	processSound.start()
 
 	print("[HANDLER] Handler is listening...")

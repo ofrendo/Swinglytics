@@ -84,6 +84,6 @@ def start_recording(triggerSound, audioFilenameTS):
 if __name__ == '__main__':
 	# Only executed if explicitely calling this file: use for testing purposes
 
-	# start_listening(conf.SOUND_TRIGGER_SOUND)
-	start_recording(conf.SOUND_TRIGGER_SOUND, conf.AUDIO_FILENAMES_TS)
+	start_listening(conf.SOUND_TRIGGER_SOUND)
+	#start_recording(conf.SOUND_TRIGGER_SOUND, conf.AUDIO_FILENAMES_TS)
    
