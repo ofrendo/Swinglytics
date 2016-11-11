@@ -171,9 +171,9 @@ def concatenateMP4(filename1, filename2):
 def createThumbnail(filename):
 	target = filename.replace("mp4", "png")
 	# get the duration of the provided video file and take the screenshot 1 second after half of the duration
-	duration = subprocess.check_output(["ffprobe -loglevel quiet -y -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "+ filename], shell=True).decode("utf-8")
+	duration = subprocess.check_output(["ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "+ filename], shell=True).decode("utf-8")
 	time = float(duration.split("\n")[0]) / 2 + 1;
-	print(str(time))
+	print("[HANDLER] Generating thumbnail at", str(time), ", duration=", str(duration))
 	if time < 10 :
 		timeString = '00:00:0' + str(round(time)) + '.00'
 	elif time > 10 :

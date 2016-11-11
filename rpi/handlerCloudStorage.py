@@ -37,8 +37,8 @@ def generateSignature(plaintext):
 	h = SHA256.new()
 	h.update(bytes(plaintext, "utf-8"))
 	hash = h.hexdigest()
-	print("Hashing:", plaintext)
-	print("Hash:", hash)
+	#print("Hashing:", plaintext)
+	#print("Hash:", hash)
 
 	# http://stackoverflow.com/questions/21327491/using-pycrypto-how-to-import-a-rsa-public-key-and-use-it-to-encrypt-a-string
 	# Then encrypt hash with private key as signature
@@ -57,7 +57,7 @@ def generateSignature(plaintext):
 	
 	#result = encrypted.encode('hex') 
 
-	print("Encrypted: ", result)
+	#print("Encrypted: ", result)
 	return (plaintext, hash, result)
 	# On server decrypt hash with public key
 	# generate hash of plaintext
@@ -131,7 +131,7 @@ def uploadFile(videoName, thumbnailName, tsMiddle, loginCheck=True):
 		"hash": signature[1], # only for testing
 		"signature": signature[2]
 	}
-	print(payload)
+	#print(payload)
 	headers = {"content-type": "application/json"}
 	response = requests.post(url, data=json.dumps(payload), headers=headers)
 	print("[STORAGE] Made POST request.")
