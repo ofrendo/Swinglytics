@@ -4,14 +4,14 @@
   <div clas="row">
     <div class="col-xs-12 col-nopad">
 
-      <div class="video-wrapper text-center">
-        <video id="swingVideo" class="video-size" muted autoplay webkit-playsinline="true" playsinline="true" >
+      <div class="video-wrapper text-center embed-responsive embed-responsive-16by9">
+        <video id="swingVideo" class="embed-responsive-item" muted autoplay webkit-playsinline="true" playsinline="true" >
 
           <source src="https://s3.eu-central-1.amazonaws.com/hopinone/courseSwing1.mp4" type="video/mp4">
           <source src="https://s3.eu-central-1.amazonaws.com/hopinone/courseSwing1.mp4" type="video/ogg">
             Your browser does not support the video tag.
         </video>
-        <div id="favStar" class="favorite-hover" onClick="addRemoveFavorite()"><i class="fa fa-star-o fa-star-o-cust" aria-hidden="true"></i></div>
+        <!--<div id="favStar" class="favorite-hover" onClick="addRemoveFavorite()"><i class="fa fa-star-o fa-star-o-cust" aria-hidden="true"></i></div>-->
       </div>
     </div>
 
@@ -23,7 +23,8 @@
           <button id="playButton" type="button" class="btn btn-default btn-play" onclick="startPauseVideo()"><i class="fa fa-play fa-play-cust" aria-hidden="true"></i></button><!--
           --><button id="speedHalfButton" type="button" class="btn btn-default btn-speed" onclick="decreaseSpeed()">0.5x</button><!--
           --><button id="speedNormalButton" type="button" class="btn btn-default btn-speed btn-speed-active" onclick="resetSpeed()">1x</button><!--
-          --><button type="button" class="btn btn-default btn-repeat" onclick="replay()"><i class="fa fa-repeat fa-repeat-cust" aria-hidden="true"></i></button>
+          --><button type="button" class="btn btn-default btn-repeat" onclick="replay()"><i class="fa fa-repeat fa-repeat-cust" aria-hidden="true"></i></button><!--
+          --><button id="favStar" type="button" class="btn btn-default btn-favorite" onclick="addRemoveFavorite()"><i class="fa fa-star-o fa-star-o-cust" aria-hidden="true"></i></button>
         </div>
       </div>
 
@@ -43,6 +44,14 @@
           <button type="button" class="btn btn-default">Posture</button><!--
           --><button type="button" class="btn btn-default">Angle</button><!--
           --><button type="button" class="btn btn-default">Feet</button><br/>
+          <form class="form-inline create-tag-form">
+            <div class="form-group">
+              <div class="input-group">
+                <input type="text" class="form-control" id="exampleInputAmount" placeholder="Create new tag...">
+                <div class="input-group-addon create-tag-button">Create</div>
+              </div>
+            </div>
+          </form>
 
         </div>
       </div>
