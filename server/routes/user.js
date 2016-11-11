@@ -59,6 +59,7 @@ router.get("/sessions", function (req, res, next) {
 
 // Delete session with specific ID
 router.delete("/sessions/:sessionID", function(req, res, next) {
+   
    if (!req.isAuthenticated()) {
     console.log("[DELETE /user/sessions] User is NOT logged in!")
     res.status(403).send("");
@@ -184,6 +185,46 @@ router.post("/endSession/:stationID", function(req, res, next) {
       console.log("[POST /startSession/:stationID] Ended a session" +
                       " with stationID=" + req.params.stationID + 
                       ", with userID=" + req.user.username);
+      res.status(200).send("");
+    });
+  });
+
+});
+
+// Update a video's tags and rating
+router.post("/videos/:videoID", function(req, res, next) {
+  if (!req.isAuthenticated()) {
+    console.log("[POST /user/videos/:videoID] User is NOT logged in!")
+    res.status(403).send("");
+    return;
+  }
+
+  User.findOne({"username": req.user.username}, function(err, user) {
+    if (err) {
+      console.log('[POST /user/videos/:videoID] Error in finding userID while getting videos: '+ err);
+      res.status(500).send("");
+      return;
+    }
+
+    var done = false;
+    for (var i=0;i<user.sessions.length;i++) {
+      for (var j=0;j<user.sessions[i].videos.length;j++) {
+        console.log("params: " + req.params.videoID + ", local: " + user.sessions[i].videos[j].videoID);
+        if (user.sessions[i].videos[j].videoID === req.params.videoID) {
+          user.sessions[i].videos[j].rating = req.body.rating;
+          user.sessions[i].videos[j].tags = req.body.tags;
+          done = true;
+          break;
+        }
+      }
+    }
+    if (done === false) {
+      console.log("[POST /user/videos/:videoID] video with videoID=" + req.params.videoID + " not found.");
+      res.status(404).send("");
+      return;
+    }
+    user.save(function() {
+      console.log("[POST /user/videos/:videoID] video with videoID=" + req.params.videoID + " updated with rating=" + req.body.rating + ", tags=" + req.body.tags);
       res.status(200).send("");
     });
   });
