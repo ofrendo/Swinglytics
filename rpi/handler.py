@@ -171,7 +171,7 @@ def concatenateMP4(filename1, filename2):
 def createThumbnail(filename):
 	target = filename.replace("mp4", "png")
 	# get the duration of the provided video file and take the screenshot 1 second after half of the duration
-	duration = subprocess.check_output(["ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "+ filename], shell=True).decode("utf-8")
+	duration = subprocess.check_output(["ffprobe -loglevel quiet -y -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "+ filename], shell=True).decode("utf-8")
 	time = float(duration.split("\n")[0]) / 2 + 1;
 	print(str(time))
 	if time < 10 :
@@ -179,12 +179,12 @@ def createThumbnail(filename):
 	elif time > 10 :
 		timeString = '00:00:' + str(round(time)) + '.00'
 	# create the screenshot
-	subprocess.call(["ffmpeg -i " + filename + " -ss " + timeString +" -vframes 1 " + target], shell=True)
+	subprocess.call(["ffmpeg -loglevel quiet -y -i " + filename + " -ss " + timeString +" -vframes 1 " + target], shell=True)
 
 def combineMP4withWAV(videoname, soundname):
 	# -itsoffset 00:00:00.00 to delay audio
 	# -vcodec & -acodec define video and audio codec used
-	subprocess.call(['ffmpeg -i ' + videoname + ' -i ' + soundname + ' -c:v copy -c:a aac videoname'], shell = True)
+	subprocess.call(['ffmpeg -loglevel quiet -y -i ' + videoname + ' -i ' + soundname + ' -c:v copy -c:a aac videoname'], shell = True)
 
 if __name__ == '__main__':
 	# Value: d for double precision float, b for boolean, i for int
