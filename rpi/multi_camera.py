@@ -20,21 +20,8 @@ def getFileIndex(filename, filenames):
 			return i
 
 def start_md(indicator, triggerMotion, cameraFilenames, cameraFilenameTS):
-	FFMPEG_BIN = 'ffmpeg'
 	cams = []
 	detectors = []
-	# define the codec: see http://www.pyimagesearch.com/2016/02/22/writing-to-video-with-opencv/ for combinations
-	#fourcc = cv2.VideoWriter_fourcc(*'XVID') # DOES NOT WORK WITH .avi
-	#print("XVID", fourcc)
-	# fourcc = cv2.VideoWriter_fourcc(*'MJPG') # THIS ONE WORKS WITH .avi
-	#print("MJPG", fourcc)
-	#fourcc = cv2.VideoWriter_fourcc(*'h264')
-	#fourcc = cv2.VideoWriter_fourcc(*'H264') # DOES NOT WORK with .avi, NOR .mkv (even though it takes longer)
-	#fourcc = cv2.VideoWriter_fourcc(*'X264') # DOES NOT WORK with .avi, .wmv, mp4
-	#fourcc = cv2.VideoWriter_fourcc(*'mp4v') # DOES NOT WORK WITH .mp4
-	
-	#fourcc = cv2.VideoWriter_fourcc('A','B','E','F')
-	#print("third", fourcc)
 
 	# create video streams and Motion Detectors depending on parameter
 	print("########################### CAMERA ##############################")
@@ -42,63 +29,28 @@ def start_md(indicator, triggerMotion, cameraFilenames, cameraFilenameTS):
 	print("##################################################################")
 	fps = conf.CAMERA_FRAMERATE
 	cam = None
-	resolution = (640,480)
+	resolution = (400,304)
 	if indicator == 1:
 		cam = VideoStream(usePiCamera=True, resolution=resolution, framerate=fps).start()
 							#, resolution=conf.CAMERA_RESOLUTION
 	elif indicator == 2:
-		cam = VideoStream(src=0, resolution=resolution, framerate=fps).start()
-	fourcc = cv2.VideoWriter_fourcc(*'x264')
-	writer = None
-	(h, w) = (None, None)
-	zeros = None
+		cam = VideoStream(src=0 , resolution=resolution, framerate=fps).start()
 	detector = BasicMotionDetector()
-	#cam.resolution = (640,480) #conf.CAMERA_RESOLUTION
-	#cam.framerate = conf.CAMERA_FRAMERATE
-	frames = []
 	# letting the cameras warm up
 	time.sleep(2.0)
-	#print(cam)
-
 	# number of frames to read
 	total = 0
-
-	for filename in itertools.cycle(cameraFilenames): #in ["temp.h264"]:
-		command = [ FFMPEG_BIN,
-        '-y', # (optional) overwrite output file if it exists
-        '-f', 'rawvideo',
-        '-vcodec','rawvideo',
-        '-s', '1024x768', # size of one frame
-        '-pix_fmt', 'rgb24',
-        '-r', '24', # frames per second
-        '-i', '-', # The imput comes from a pipe
-        '-an', # Tells FFMPEG not to expect any audio
-        '-vcodec', 'mpeg',
-        '/rpi/vid/my_output_videofile.mp4' ]
-
-		pipe = sp.Popen( command, stdin=sp.PIPE, stderr=sp.PIPE)
-		
-		# create openCV Filewriter: one per file (4 circular files)
-		# save when this file was written to
-		#i = getFileIndex(filename, cameraFilenames)
-		#cameraFilenameTS[i] = time.time()
-
-		#videoWriter = cv2.VideoWriter(filename, fourcc, conf.CAMERA_FRAMERATE, conf.CAMERA_RESOLUTION, True) # conf.CAMERA_RESOLUTION
-		#videoWriter = cv2.VideoWriter("test.avi", fourcc, conf.CAMERA_FRAMERATE, (680,480))
-		#print("[CAMERA", indicator, "] Recording to",  filename, "at", cameraFilenameTS[i])
-
+	for filename in itertools.cycle(cameraFilenames):
 		# loop over the frames 
 		frameCounter = 0
 		while(frameCounter < conf.CAMERA_CAP_LEN_FRAMES): # e.g. 150
-			
 			# read the next frame from the video stream and resize
 			# it to have a maximum width of 400 pixels
 			frameCounter += 1
 			total += 1
-
 			frame = cam.read()
 			frame = imutils.resize(frame, width = 300)
-			#cv2.imshow("Golf", frame)
+			# cv2.imshow("Golf", frame)
 			startTime = time.time()
 			#frameGray = imutils.resize(frame, width=400)
 			#print(frame)
@@ -107,7 +59,7 @@ def start_md(indicator, triggerMotion, cameraFilenames, cameraFilenameTS):
 			gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 			gray = cv2.GaussianBlur(gray, (21, 21), 0)
 			locs = detector.update(gray)
-			
+		
 			# we should allow the motion detector to "run" for a bit
 			# and accumulate a set of frames to form a nice average
 			# also reset frames so that the video is only cut when we have the average
@@ -144,35 +96,13 @@ def start_md(indicator, triggerMotion, cameraFilenames, cameraFilenameTS):
 				cv2.rectangle(gray, (minX, minY), (maxX, maxY),
 				(0, 0, 255), 3)
 				
-				
 				cv2.rectangle(frame , (minX, minY), (maxX, maxY),
 				(0, 255, 0), 3)
 				cv2.imshow("movement", frame)
 				cv2.imwrite("rpi/vid/img/frame" + str(int(time.time())) +  ".png", frame)
 				cv2.imwrite("rpi/vid/img/frameBlurred" + str(int(time.time()))  + ".png", gray)
-			cv2.rectangle(frame , (75, 25), (225,200), (0, 0, 255), 3)
+			cv2.rectangle(frame , (conf.MOTION_X_MIN, conf.MOTION_Y_MIN), (conf.MOTION_X_MAX, conf.MOTION_Y_MAX), (0, 0, 255), 3)
 			cv2.imshow("boundary", frame)
-			#frames.append(frame)
-			# loop over the frames a second time
-			#startTime = time.time()			
-			#videoWriter.write(frame)
-			#print("Writing took", (time.time() - startTime), "it should take", (1/conf.CAMERA_FRAMERATE))
-			
-			#print("Frame processing took", (time.time() - startTime), "it should take", (1/conf.CAMERA_FRAMERATE))
-
-				# if total > 32:
-				# 	print("total > 32")
-					# for (frame, name) in zip(frames, [cam]):
-					# 	print("writing frame")
-					# 	videoWriter.write(frame)
-			if writer is None:
-				(h, w) = frame.shape[:2]
-				# writer = cv2.VideoWriter('rpi/vid/mc_vid.avi', fourcc, fps, (w, h), True)
-				writer = cv2.VideoWriter(filename, fourcc, fps, (w, h), True)
-				zeros = np.zeros((h, w), dtype='uint8')		
-			
-			# write the output frame to file
-			writer.write(frame)
 		
 		# draw the timestamp on the frame and display it
 		# cv2.putText(frame, ts, (10, frame.shape[0] - 10),
