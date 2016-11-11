@@ -815,3 +815,19 @@ i{color: #555;}
   font-size: 25px;
   color: #2196f3
 }
+
+.create-tag-form input{
+  border-radius: 0px;
+  border-left: 0px;
+  height: 40px;
+  outline: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  box-shadow: none;
+  font-size: 16px;
+}
+
+.create-tag-button{
+  border-right: 0px;
+  border-radius: 0px;
+}
