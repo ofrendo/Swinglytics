@@ -1,6 +1,7 @@
 # import the necessary packages
 import imutils
 import cv2
+import golfConfig as conf
 
 class BasicMotionDetector:
 	def __init__(self, accumWeight=0.5, deltaThresh=5, minArea=5000):
@@ -47,9 +48,18 @@ class BasicMotionDetector:
 		# loop over the contours
 		for c in cnts:
 			# only add the contour to the locations list if it
-			# exceeds the minimum area
-			if cv2.contourArea(c) > self.minArea:
-				locs.append(c)
+			xmin = conf.MOTION_X_MIN
+			xmax = conf.MOTION_X_MAX
+			ymin = conf.MOTION_Y_MIN
+			ymax = conf.MOTION_Y_MAX
+			(x, y, w, h) = cv2.boundingRect(c)
+			# inside the defined boundaries
+			if xmin <= x and ymin <= y and x + w <= xmax  and y + h <= ymax:
+				# and exceeds the minimum area
+				print('inside the rectangle')
+				if cv2.contourArea(c) > self.minArea:
+					print('motion inside the box')
+					locs.append(c)
 
 		# return the set of locations
 		return locs

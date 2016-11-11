@@ -3,11 +3,12 @@ import multiprocessing as mp
 import time
 import sys
 import subprocess
+import struct
 
 import cv2
-from camera import start_record
+# from camera import start_record
 from multi_camera import start_md
-from soundListenerUSB import start_listening
+from soundListenerUSB import start_listening, start_recording
 import golfConfig as conf
 import handlerCloudStorage as storage
 
@@ -56,6 +57,9 @@ def createSwingClip(tsMiddle, cameraFilenameTS):
 			filename0 = conf.CAMERA_FILENAMES1[(i-1) % len(conf.CAMERA_FILENAMES1)]
 			filename1 = conf.CAMERA_FILENAMES1[i]
 			filename2 = conf.CAMERA_FILENAMES1[(i+1) % len(conf.CAMERA_FILENAMES1)]
+			# soundname0 = conf.AUDIO_FILENAMES[(i-1) % len(conf.AUDIO_FILENAMES)]
+			# soundname1 =  conf.AUDIO_FILENAMES[i]
+			# soundname2 =  conf.AUDIO_FILENAMES[(i+1) % len(conf.AUDIO_FILENAMES)]
 			break
 
 
@@ -89,25 +93,30 @@ def createSwingClip(tsMiddle, cameraFilenameTS):
 	# (http://stackoverflow.com/questions/38112711/how-to-get-the-duration-bitrate-of-a-h264-file-with-avconv-ffmpeg)
 	if case == 1:
 		convertToMP4(filename1)
+		# combineMP4withWAV(filename1, soundname1)
 		cutMP4(filename1, 
 			diffToFirstClipStart-clipStartToMiddleDuration, 
 			clipStartToMiddleDuration+clipMiddleToEndDuration,
 			"rpi/vid/swingClip.mp4")
 	elif case == 2:
 		convertToMP4(filename1)
+		# combineMP4withWAV(filename1, soundname1)
 		convertToMP4(filename2)
+		# combineMP4withWAV(filename2, soundname2)
 		cutMP4(filename1, diffToFirstClipStart-clipStartToMiddleDuration, None, "rpi/vid/swingClipP1.mp4")
 		cutMP4(filename2, 0, clipMiddleToEndDuration - (conf.CAMERA_CAP_LEN-diffToFirstClipStart), "rpi/vid/swingClipP2.mp4")
 		concatenateMP4("rpi/vid/swingClipP1.mp4", "rpi/vid/swingClipP2.mp4")
 	elif case == 3:
 		convertToMP4(filename0)
+		# combineMP4withWAV(filename0, soundname0)
 		convertToMP4(filename1)
+		# combineMP4withWAV(filename1, soundname1)
 		cutMP4(filename0, conf.CAMERA_CAP_LEN- (clipStartToMiddleDuration-diffToFirstClipStart), None, "rpi/vid/swingClipP1.mp4")
 		cutMP4(filename1, 0, diffToFirstClipStart + clipMiddleToEndDuration, "rpi/vid/swingClipP2.mp4")
 		concatenateMP4("rpi/vid/swingClipP1.mp4", "rpi/vid/swingClipP2.mp4")
 	# p.wait #sync
 
-	thumbnail = createThumbnail("rpi/vid/swingClip.mp4","rpi/vid/swingClip.png")
+	createThumbnail("rpi/vid/swingClip.mp4")
 	# Upload files in new subprocesses
 	processUploadVideo = mp.Process(name="processUploadVideo",
 									target=storage.uploadFile,
@@ -159,46 +168,41 @@ def concatenateMP4(filename1, filename2):
 	#subprocess.call(["rm concat.txt"], shell=True)
 
 # https://bitbucket.org/zakhar/ffvideo/wiki/Home
-def createThumbnail(filename,target):
-	stream = cv2.VideoCapture(filename)
-	
-	# how long is the video
-	# time_length = clipStartToMiddleDuration + clipMiddleToEndDuration
-	# fps = conf.CAMERA_FRAMERATE
-	# frames_total = time_length  * fps
-	# which of the frames is the 
-	# thumbnail_frame = (frames_total / (clipStartToMiddleDuration * fps))
+def createThumbnail(filename):
+	target = filename.replace("mp4", "png")
+	# get the duration of the provided video file and take the screenshot 1 second after half of the duration
+	duration = subprocess.check_output(["ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "+ filename], shell=True).decode("utf-8")
+	time = float(duration.split("\n")[0]) / 2 + 1;
+	print(str(time))
+	if time < 10 :
+		timeString = '00:00:0' + str(round(time)) + '.00'
+	elif time > 10 :
+		timeString = '00:00:' + str(round(time)) + '.00'
+	# create the screenshot
+	subprocess.call(["ffmpeg -i " + filename + " -ss " + timeString +" -vframes 1 " + target], shell=True)
 
-	# calculate the middle frame of the video and deduct
-	thumbnail_frame = (clipStartToMiddleDuration * conf.CAMERA_FRAMERATE) - 1
-	# read the next frame
-	stream.set(2, thumbnail_frame)
-	ret, frame = stream.read()
-	# might be needed to show/store frame
-	cv2.waitKey()
-	cv2.imwrite(target,frame)
-	# stream = VideoStream(filename)
-	# frame = stream.get_frame_at_second(clipStartToMiddleDuration).image()
-	# frame.save(target,format='PNG', optimize=True)
-	stream.release()
+def combineMP4withWAV(videoname, soundname):
+	# -itsoffset 00:00:00.00 to delay audio
+	# -vcodec & -acodec define video and audio codec used
+	subprocess.call(['ffmpeg -i ' + videoname + ' -i ' + soundname + ' -c:v copy -c:a aac videoname'], shell = True)
 
 if __name__ == '__main__':
 	# Value: d for double precision float, b for boolean, i for int
 	# Each value gives the timestamp when it last happened
 	triggerMotion1 = conf.CAMERA_TRIGGER_MOTION1
 	triggerSound = conf.SOUND_TRIGGER_SOUND
-
-	processCameraPi = mp.Process(name="processCameraPi", target=start_record, args=(triggerMotion1, conf.CAMERA_FILENAMES_TS1))
+	# processCameraPi = mp.Process(name="processCameraPi", target=start_record, args=(triggerMotion1, conf.CAMERA_FILENAMES_TS1))
 	processCameraMD = mp.Process(name="processCameraMD", target=start_md, args=(2, triggerMotion1, conf.CAMERA_FILENAMES1, conf.CAMERA_FILENAMES_TS1))
 	#processSound = mp.Process(name="processSound", target=start_listening, args=(triggerSound, conf.PREP_FILE_LENGTH/60, 'rpi/sound/','.wav'))
-	processSound = mp.Process(name="processSound", target=start_listening, args=(triggerSound,))
+	# processSound = mp.Process(name="processSound", target=start_listening, args=(triggerSound,))
+	processSound = mp.Process(name="processSound", target=start_recording, args=(triggerSound, conf.AUDIO_FILENAMES_TS))
 
-	processCameraPi.daemon = True
+	# processCameraPi.daemon = True
 	processCameraMD.daemon = True
 	processSound.daemon = True
-
-	processCameraPi.start()
-	#processCameraMD.start()
+	
+	# processCameraPi.start()
+	processCameraMD.start()
 	processSound.start()
 
 	print("[HANDLER] Handler is listening...")

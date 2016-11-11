@@ -25,14 +25,30 @@ CAMERA_TRIGGER_MOTION1 = mp.Value("d", -1) # saves a shared timestamp when the l
 CAMERA_TRIGGER_MOTION2 = mp.Value("d", -1) # saves a shared timestamp when the last motion detection occured (action cam)
 
 AUDIO_DURATION_MINUTES = 10 # used for audio recording
+AUDIO_DURATION_SECONDS = 10
 RECORD_FOLDER = "rpi/vid/"
 AUDIO_ENDING = ".wav"
 
 ## Sound stuff
 SOUND_THRESHOLD = 400 # how loud does the noise have to be
 SOUND_TRIGGER_SOUND = mp.Value("d", -1)
+SOUND_CHANNELS = 1
+SOUND_RATE = 44100
+SOUND_CHUNKSIZE = 1024
+AUDIO_FILENAMES = ("rpi/vid/cap1_1" + AUDIO_ENDING, 
+             "rpi/vid/cap1_2" + AUDIO_ENDING,
+             "rpi/vid/cap1_3" + AUDIO_ENDING,
+             "rpi/vid/cap1_4" + AUDIO_ENDING)
+AUDIO_FILENAMES_TS = mp.Array("d", [-1, -1, -1, -1])
 
 
+## Motion Detection Stuff
+height = 304 * 0.75 # 75% takes the rescaling of the frame into consideration
+width = 400 * 0.75 # 75% takes the rescaling of the frame into consideration
+MOTION_X_MIN = int(width * 0.25) #75
+MOTION_X_MAX = int(width * 0.75) #225
+MOTION_Y_MIN = int(height * 0.1) #25
+MOTION_Y_MAX = int(height * 0.9) #200
 
 ## Handler stuff
 HANDLER_MIN_SWING_DELAY = 1
