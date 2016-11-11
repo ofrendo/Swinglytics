@@ -209,7 +209,6 @@ router.post("/videos/:videoID", function(req, res, next) {
     var done = false;
     for (var i=0;i<user.sessions.length;i++) {
       for (var j=0;j<user.sessions[i].videos.length;j++) {
-        console.log("params: " + req.params.videoID + ", local: " + user.sessions[i].videos[j].videoID);
         if (user.sessions[i].videos[j].videoID === req.params.videoID) {
           user.sessions[i].videos[j].rating = req.body.rating;
           user.sessions[i].videos[j].tags = req.body.tags;
