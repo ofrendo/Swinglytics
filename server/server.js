@@ -76,11 +76,12 @@ var argv = require('minimist')(process.argv.slice(2));
 
 if (argv.ssl === true) {
 	var options = {
-	    //key: fs.readFileSync('./id_rsa_private.pem'),
-	    //key: fs.readFileSync('../web/QRTest/server.key'),
-	    //key: fs.readFileSync("")
+	    //key: fs.readFileSync('./id_rsa_private.pem'), // rpi private key
+	    //key: fs.readFileSync('../web/QRTest/server.key'), //generated key for QR test
+	    key: fs.readFileSync("/etc/letsencrypt/live/golf-innovation.com/privkey.pem"), // DO golf-innovation.com
 	    //cert: fs.readFileSync('./id_rsa.pem')
-	    cert: fs.readFileSync('../web/QRTest/server.crt')
+	    //cert: fs.readFileSync('../web/QRTest/server.crt') //generated key for QR test
+	    key: fs.readFileSync("/etc/letsencrypt/live/golf-innovation.com/cert.pem")
 	};
 	var server = https.createServer(options, app).listen(port, function(){
 		console.log('[SERVER] HTTPS API is running on port: ' + port);
