@@ -81,7 +81,8 @@ if (argv.ssl === true) {
 	    key: fs.readFileSync("/etc/letsencrypt/live/golf-innovation.com/privkey.pem"), // DO golf-innovation.com
 	    //cert: fs.readFileSync('./id_rsa.pem')
 	    //cert: fs.readFileSync('../web/QRTest/server.crt') //generated key for QR test
-	    key: fs.readFileSync("/etc/letsencrypt/live/golf-innovation.com/cert.pem")
+	    key: fs.readFileSync("/etc/letsencrypt/live/golf-innovation.com/fullchain.pem"),
+	    ca: fs.readFileSync('/etc/letsencrypt/live/golf-innovation.com/chain.pem')
 	};
 	var server = https.createServer(options, app).listen(port, function(){
 		console.log('[SERVER] HTTPS API is running on port: ' + port);
