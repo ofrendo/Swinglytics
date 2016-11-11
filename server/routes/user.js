@@ -38,7 +38,6 @@ router.get('/logout', function(req, res) {
 
 
 /* Get all videos for user */
-// This needs to be changed, instead deliver all sessions with all videos
 router.get("/sessions", function (req, res, next) {
   if (!req.isAuthenticated()) {
     console.log("[GET /user/sessions] User is NOT logged in!")
@@ -56,6 +55,40 @@ router.get("/sessions", function (req, res, next) {
     res.status(200).send(user.sessions);
   });
 
+});
+
+// Delete session with specific ID
+router.delete("/sessions/:sessionID", function(req, res, next) {
+   if (!req.isAuthenticated()) {
+    console.log("[DELETE /user/sessions] User is NOT logged in!")
+    res.status(403).send("");
+    return;
+  }
+  User.findOne({"username": req.user.username}, function(err, user) {
+    if (err) {
+      console.log('[DELETE /user/sessions] Error in finding userID while getting videos: '+ err);
+      res.status(500).send("");
+      return;
+    }
+    var index = -1;
+    for (var i=0;i<user.sessions.length;i++) {
+      if (user.sessions[i].sessionID === req.params.sessionID) {
+        index = i;
+      }
+    }
+    if (index === -1) {
+      console.log('[DELETE /user/sessions] Error in finding userID while getting videos: '+ err);
+      res.status(404).send("");
+      return;
+    }
+    console.log("[DELETE /user/sessions] User with userID=" + req.user.username + " had " + user.sessions.length + " sessions.");
+    user.sessions.splice(index, 1);
+    user.save(function(err) {
+      console.log("[DELETE /user/sessions] User with userID=" + req.user.username + " has " + user.sessions.length + " sessions stored.");
+      res.status(200).send("");
+    });
+    
+  });
 });
 
 router.post("/startSession/:stationID", function(req, res, next) {

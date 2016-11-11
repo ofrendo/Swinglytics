@@ -35,25 +35,25 @@ class App extends Component {
    console.log("Email: " + email);
    console.log("Password: " + password);
 
-  fetch("server/login", {  
-    method: "post",  
-    //mode: 'cors', 
-    headers: {  
-      "Content-type": "application/json"  
-    },  
+  fetch("server/login", {
+    method: "post",
+    //mode: 'cors',
+    headers: {
+      "Content-type": "application/json"
+    },
     body: {
       "email": email,
       "password": password
     }
   })
-  .then(json)  
-  .then(function (data) {  
-    console.log('Request succeeded with JSON response', data);  
+  .then(JSON)  
+  .then(function (data) {
+    console.log('Request succeeded with JSON response', data);
     //const path = '/dashboard';
     //browserHistory.push(path);
-  })  
-  .catch(function (error) {  
-    console.log('Request failed', error);  
+  })
+  .catch(function (error) {
+    console.log('Request failed', error);
   });
 
  }
