@@ -100,7 +100,7 @@ def uploadFile(videoName, thumbnailName, tsMiddle, loginCheck=True):
 	random = random_with_N_digits(5)
 	tsMiddle = int(tsMiddle)
 	keyVideo = "swingClip_" + str(conf.STATION_ID) + "_" + str(tsMiddle) + "_" + str(random) + ".mp4"
-	keyThumbnail = "swingClip" + str(conf.STATION_ID) + "_" + str(tsMiddle) + "_" + str(random) + ".png"
+	keyThumbnail = "swingClip_" + str(conf.STATION_ID) + "_" + str(tsMiddle) + "_" + str(random) + ".png"
 	if conf.SERVER_USE_FTP == False:
 		uploadFileAWS(videoName, keyVideo)
 		uploadFileAWS(thumbnailName, keyThumbnail)
