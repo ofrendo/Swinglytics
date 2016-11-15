@@ -34,4 +34,30 @@ router.post("/", function(req, res, next) {
 
 });
 
+
+function getStation(stationID, callback) {
+	Station.findOne({"stationID": stationID}, callback);
+}
+
+function createStation(stationID, publicKey, callback) {
+	var station = new Station();
+	station.stationID = stationID;
+	station.currentUserID = "";
+	station.publicKey = publicKey;
+	station.save(callback);
+}
+
+function deleteStation(stationID, callback) {
+	Station.find({"stationID": stationID}).remove(callback);
+}
+
+router.dbMethods = {
+	getStation: getStation,
+	createStation: createStation,
+	deleteStation: deleteStation
+};
+
+
+
+
 module.exports = router;
