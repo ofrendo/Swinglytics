@@ -46,7 +46,7 @@ a:link{text-decoration: none; color: inherit !important;}
   background: -webkit-linear-gradient($lightgreen, $darkgreen);
   background: -o-linear-gradient($lightgreen, $darkgreen);
   background: -moz-linear-gradient($lightgreen, $darkgreen);
-  background: linear-gradient($lightgreen, $darkgreen); 
+  background: linear-gradient($lightgreen, $darkgreen);
   border-radius: 0px;
   color: $defaultText !important;
   border-top:0px;
@@ -480,6 +480,31 @@ i{color: #555;}
 
   // Swing page
 
+  // video player
+  .move-up{
+    position: relative;
+    top: -38px;
+  }
+
+  .favorite-hover{
+    z-index: 999;
+    float:right;
+    position: relative;
+    top: -180px;
+    left: -10px;
+    cursor: pointer;
+  }
+
+
+
+  .video-wrapper{
+    height: 180px !important;
+  }
+
+  .video-menu-options button{
+    width: 33.33% !important;
+  }
+
 }
 
 // Swings Page CSS
@@ -564,7 +589,7 @@ i{color: #555;}
   font-weight: 100;
   color: #888;
   padding-left: 3px;
-  padding-right: 3px;
+  padding-right: 5px;
 }
 
 .session-date{
@@ -597,3 +622,209 @@ i{color: #555;}
 .panel-body { padding: 0px; }
 
 .panel-body .table {margin-bottom: 0px; }
+
+
+.video-size{
+  width: auto;
+  max-height: 400px;
+}
+
+.video-wrapper{
+  height: 400px;
+}
+
+.video-controls{
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  box-sizing: border-box !important;
+}
+.video-controls button{
+  border: 0px;
+  border-radius: 0px !important;
+  width: 20%;
+  height: 45px;
+  box-sizing: border-box !important;
+}
+
+.btn-play{
+  background: #2196f3 !important;
+  color: white;
+}
+
+.btn-repeat{
+  background: #2196f3 !important;
+}
+
+.btn-favorite{
+  background: #2196f3 !important;
+}
+
+.btn-speed{
+  background: #2196f3;
+  color: white !important;
+  &:hover{color: white !important; background: #1b89e0; outline: 0;}
+  &:focus{color: white !important; background: #1b89e0; outline: 0;}
+  &:active{color: white !important; background: #1b89e0; outline: 0;}
+  &:active:focus{background:#1b89e0; outline: 0;}
+}
+
+.btn-speed-active{
+  background: #166aad !important;
+}
+
+.fa-play-cust{
+  color: white !important;
+}
+
+.fa-pause-cust{
+  color: white !important;
+}
+
+.fa-repeat-cust{
+  color: white !important;
+}
+
+// navbar
+.swinglytics-navbar-alt{
+  //background-color: $navbarBG;
+  background: $lightgreen;
+  background: -webkit-linear-gradient(#1b89e0, #2196f3);
+  background: -o-linear-gradient(#1b89e0, #2196f3);
+  background: -moz-linear-gradient(#1b89e0, #2196f3);
+  background: linear-gradient(#1b89e0, #2196f3);
+  border-radius: 0px;
+  color: $defaultText !important;
+  border-top:0px;
+  border-left:0px;
+  border-right:0px;
+  border: none;
+  margin-bottom: 0px;
+  padding: 5px 0px 5px 0px;
+  border-bottom: 1px solid #2196f3;
+}
+
+.video-menu-options{
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  box-sizing: border-box !important;
+}
+.video-menu-options button{
+  width: 33.33%;
+  border: 0px;
+  border-radius: 0px !important;
+  height: 45px;
+}
+
+.btn-tag{
+  background: #ececec !important;
+}
+
+
+
+.fa-star-o-cust{
+  color: #ffc107;
+  font-size: 25px;
+}
+
+.fa-star-cust{
+  color: #ffc107;
+  font-size: 25px;
+}
+
+.favorite-hover{
+  z-index: 999;
+  float:right;
+  position: relative;
+  top: -180px;
+  left: -10px;
+  cursor: pointer;
+}
+
+.video-tag-options{
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  box-sizing: border-box !important;
+  border-top: 1px solid #ccc;
+}
+.video-tag-options button{
+  width: 33.33%;
+  border: 0px;
+  border-radius: 0px !important;
+  height: 45px;
+}
+
+.video-container{
+  height: 101vh;
+}
+
+.session-tag-menu{
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  box-sizing: border-box !important;
+}
+
+.session-tag-menu button{
+  width: 33.33%;
+  border: 0px;
+  border-radius: 0px !important;
+  height: 45px;
+  background: white;
+  &:active:focus{outline: 0;}
+  &:focus{outline: 0;}
+  &:hover{outline: 0;}
+}
+
+.session-tag-menu span{
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+
+.tag-highlight-good span{
+  border-bottom: 1px solid #4caf50;
+}
+
+.tag-highlight-bad span{
+  border-bottom: 1px solid #f44336;
+}
+
+.tag-highlight-great span{
+  border-bottom: 1px solid #e91e63;
+}
+
+.tag-highlight-posture span{
+  border-bottom: 1px solid #ffc107;
+}
+
+.tag-highlight-angle span{
+  border-bottom: 1px solid #2196f3;
+}
+
+.tag-highlight-feet span{
+  border-bottom: 1px solid #673ab7;
+}
+
+.fa-play-session{
+  font-size: 25px;
+  color: #2196f3
+}
+
+.create-tag-form input{
+  border-radius: 0px;
+  border-left: 0px;
+  height: 40px;
+  outline: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  box-shadow: none;
+  font-size: 16px;
+}
+
+.create-tag-button{
+  border-right: 0px;
+  border-radius: 0px;
+}

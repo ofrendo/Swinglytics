@@ -1,12 +1,150 @@
 <Template name="videoTemplate">
-  {{> navbarTemplate }}
-  <div class="video-wrapper text-center">
-    <video width="320" height="240" controls poster="/images/Thumb1.jpg">
-      <source src="https://s3.eu-central-1.amazonaws.com/hopinone/courseSwing1.mp4" type="video/mp4">
-      <source src="https://s3.eu-central-1.amazonaws.com/hopinone/courseSwing1.mp4" type="video/ogg">
-        Your browser does not support the video tag.
-    </video>
+  {{> navbarTemplateAlt }}
+<div class="container col-nopad video-container" >
+  <div clas="row">
+    <div class="col-xs-12 col-nopad">
+
+      <div class="video-wrapper text-center embed-responsive embed-responsive-16by9">
+        <video id="swingVideo" class="embed-responsive-item" muted autoplay webkit-playsinline="true" playsinline="true" >
+
+          <source src="https://s3.eu-central-1.amazonaws.com/hopinone/courseSwing1.mp4" type="video/mp4">
+          <source src="https://s3.eu-central-1.amazonaws.com/hopinone/courseSwing1.mp4" type="video/ogg">
+            Your browser does not support the video tag.
+        </video>
+        <!--<div id="favStar" class="favorite-hover" onClick="addRemoveFavorite()"><i class="fa fa-star-o fa-star-o-cust" aria-hidden="true"></i></div>-->
+      </div>
+    </div>
+
+
+    <div class="move-up">
+      <div class="col-xs-12 text-center col-nopad">
+        <div class="video-controls">
+          <!-- keep comments for correct spacing -->
+          <button id="playButton" type="button" class="btn btn-default btn-play" onclick="startPauseVideo()"><i class="fa fa-play fa-play-cust" aria-hidden="true"></i></button><!--
+          --><button id="speedHalfButton" type="button" class="btn btn-default btn-speed" onclick="decreaseSpeed()">0.5x</button><!--
+          --><button id="speedNormalButton" type="button" class="btn btn-default btn-speed btn-speed-active" onclick="resetSpeed()">1x</button><!--
+          --><button type="button" class="btn btn-default btn-repeat" onclick="replay()"><i class="fa fa-repeat fa-repeat-cust" aria-hidden="true"></i></button><!--
+          --><button id="favStar" type="button" class="btn btn-default btn-favorite" onclick="addRemoveFavorite()"><i class="fa fa-star-o fa-star-o-cust" aria-hidden="true"></i></button>
+        </div>
+      </div>
+
+      <div class="col-xs-12 text-center col-nopad">
+        <div class="video-menu-options">
+          <button type="button" class="btn btn-default btn-tag" onclick="showHideTagMenu()"><i class="fa fa-tags" aria-hidden="true"></i></button><!--
+          --><button type="button" class="btn btn-default">Previous</button><!--
+          --><button type="button" class="btn btn-default">Next</button>
+        </div>
+      </div>
+
+      <div class="col-xs-12 text-center col-nopad">
+        <div id="tagBox" class="video-tag-options" style="visibility: hidden">
+          <button type="button" class="btn btn-default">Good</button><!--
+          --><button type="button" class="btn btn-default">Bad</button><!--
+          --><button type="button" class="btn btn-default">Great</button><br/>
+          <button type="button" class="btn btn-default">Posture</button><!--
+          --><button type="button" class="btn btn-default">Angle</button><!--
+          --><button type="button" class="btn btn-default">Feet</button><br/>
+          <form class="form-inline create-tag-form">
+            <div class="form-group">
+              <div class="input-group">
+                <input type="text" class="form-control" id="exampleInputAmount" placeholder="Create new tag...">
+                <div class="input-group-addon create-tag-button">Create</div>
+              </div>
+            </div>
+          </form>
+
+        </div>
+      </div>
+    </div>
   </div>
+</div>
 
 {{> footerTemplate }}
+<script>
+  document.getElementById('swingVideo').addEventListener('loadedmetadata', function() {
+    this.pause();
+    console.log("Video was loaded and paused at 0 seconds")
+  }, false);
+
+
+  function showHideTagMenu(){
+    // if the menu is already open, close it
+    if(document.getElementById("tagBox").style.visibility == "visible"){
+      console.log("1")
+      document.getElementById("tagBox").style.visibility = "hidden"
+    }
+    // else open it
+    else{
+      console.log("2")
+      document.getElementById("tagBox").style.visibility = "visible"
+    }
+  }
+
+  function addRemoveFavorite(){
+    // add a swing to favorites
+    if(document.getElementById("favStar").innerHTML == '<i class="fa fa-star-o fa-star-o-cust" aria-hidden="true"></i>'){
+      // add to favorite and replace star
+      document.getElementById("favStar").innerHTML = '<i class="fa fa-star fa-star-cust" aria-hidden="true"></i>'
+    }
+    else{
+      // delete from favorites
+      document.getElementById("favStar").innerHTML = '<i class="fa fa-star-o fa-star-o-cust" aria-hidden="true"></i>'
+    }
+  }
+
+  function startPauseVideo(){
+    //document.getElementById("swingVideo").play();
+    if (document.getElementById("playButton").innerHTML == '<i class="fa fa-play fa-play-cust" aria-hidden="true"></i>'){
+      console.log("Play button was pressed");
+      document.getElementById("playButton").innerHTML = '<i class="fa fa-pause fa-pause-cust" aria-hidden="true"></i>';
+      document.getElementById("swingVideo").play();
+    }
+    else{
+      document.getElementById("playButton").innerHTML = '<i class="fa fa-play fa-play-cust" aria-hidden="true"></i>';
+      document.getElementById("swingVideo").pause();
+    }
+  }
+
+  function decreaseSpeed(){
+    if(document.getElementById("speedHalfButton").className.match(/(?:^|\s)btn-speed-active(?!\S)/)){
+      // button is already active
+    }
+    else{
+      // add active class
+      document.getElementById("speedHalfButton").className += " btn-speed-active";
+      // check if "normal" speed is active remove active class
+      if(document.getElementById("speedNormalButton").className.match(/(?:^|\s)btn-speed-active(?!\S)/)){
+        document.getElementById("speedNormalButton").className = document.getElementById("speedNormalButton").className.replace( /(?:^|\s)btn-speed-active(?!\S)/g , '' )
+      }
+    }
+    document.getElementById("swingVideo").playbackRate = 0.5;
+    document.getElementById("swingVideo").play();
+  }
+
+  function resetSpeed(){
+    document.getElementById("swingVideo").playbackRate = 1;
+    document.getElementById("swingVideo").play();
+
+    if(document.getElementById("speedNormalButton").className.match(/(?:^|\s)btn-speed-active(?!\S)/)){
+      // if it already has the class do nothing
+    }
+    else{
+      // add active class
+      document.getElementById("speedNormalButton").className += " btn-speed-active";
+      // check if "halfSpeed" is active
+      if(document.getElementById("speedHalfButton").className.match(/(?:^|\s)btn-speed-active(?!\S)/)){
+        document.getElementById("speedHalfButton").className = document.getElementById("speedHalfButton").className.replace( /(?:^|\s)btn-speed-active(?!\S)/g , '' )
+      }
+    }
+  }
+
+  function replay(){
+    document.getElementById("swingVideo").currentTime = 00;
+    document.getElementById("swingVideo").play();
+    document.getElementById("playButton").innerHTML = '<i class="fa fa-pause fa-pause-cust" aria-hidden="true"></i>';
+  }
+</script>
 </Template>
+
+
+<!--poster="/images/Thumb1.jpg"-->

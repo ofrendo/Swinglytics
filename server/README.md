@@ -70,10 +70,10 @@ Output:
 ```
 
 ```
-GET /user/videos [requires login]
+GET /user/sessions [requires login]
 
 Output:
-200 With array of videos, each a JSON object {videoID, rating, tags}
+200 With array of session of videos
 403 If not logged in
 500 Internal server error
 ```
@@ -97,4 +97,21 @@ Output:
 500 Internal server error
 ```
 
+```
+DELETE /user/session/:sessionID [requires login]
 
+Output: 
+200 OK
+404 No sessionID found
+500 Internal server error
+```
+
+
+```
+POST /user/videos/:videoID [requires login]
+
+Output: 
+200 OK
+404 No videoID found
+500 Internal server error
+```

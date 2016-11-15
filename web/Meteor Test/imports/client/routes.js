@@ -6,6 +6,7 @@ import '../ui/layouts/layout.html';
 import '../ui/pages/root.html';
 import '../ui/pages/dashboard.html';
 import '../ui/components/navbar.html';
+import '../ui/components/navbar_alt.html'
 import '../ui/components/returnHome.html';
 import '../ui/components/footer.html';
 import '../ui/pages/login.html';

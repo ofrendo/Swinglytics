@@ -71,6 +71,12 @@ router.post('/', function(req, res) {
     else {
       console.log("[POST /video] User with userID=" + body.userID + " has " + user.sessions.length + " sessions stored.");
 
+      if (user.sessions.length === 0) {
+        console.log("[POST /video] User must have at least one session.");
+        res.status(500).send("");
+        return;
+      }
+
       // find the correct session to push the video to: the one with max timestamp
       var maxTS = -1;
       var latestSession = null;
@@ -87,7 +93,7 @@ router.post('/', function(req, res) {
       // Once it is found, push a new video to it
       session.videos.push({
         videoID: body.stationID + "_" + body.timestamp + "_" + body.random,
-        rating: 5,
+        rating: 0,
         tags: ""
       });
       user.save(function(err) {
