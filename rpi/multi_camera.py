@@ -90,7 +90,7 @@ def start_md(indicator, triggerMotion, cameraFilenames, cameraFilenameTS):
 
 				grayOnlyChanges = cv2.absdiff(gray, cv2.convertScaleAbs(detector.avg)) 
 				timeChanged = time.time()
-				cv2.imwrite("rpi/vid/img/frameBlurredOnlyChanges" + str(int(time.time())) + ".png", grayOnlyChanges)
+				#cv2.imwrite("rpi/vid/img/frameBlurredOnlyChanges" + str(int(time.time())) + ".png", grayOnlyChanges)
 
 				# # draw the bounding box
 				cv2.rectangle(gray, (minX, minY), (maxX, maxY),
@@ -99,8 +99,8 @@ def start_md(indicator, triggerMotion, cameraFilenames, cameraFilenameTS):
 				cv2.rectangle(frame , (minX, minY), (maxX, maxY),
 				(0, 255, 0), 3)
 				cv2.imshow("movement", frame)
-				cv2.imwrite("rpi/vid/img/frame" + str(int(time.time())) +  ".png", frame)
-				cv2.imwrite("rpi/vid/img/frameBlurred" + str(int(time.time()))  + ".png", gray)
+				#cv2.imwrite("rpi/vid/img/frame" + str(int(time.time())) +  ".png", frame)
+				#cv2.imwrite("rpi/vid/img/frameBlurred" + str(int(time.time()))  + ".png", gray)
 			cv2.rectangle(frame , (conf.MOTION_X_MIN, conf.MOTION_Y_MIN), (conf.MOTION_X_MAX, conf.MOTION_Y_MAX), (0, 0, 255), 3)
 			cv2.imshow("boundary", frame)
 		

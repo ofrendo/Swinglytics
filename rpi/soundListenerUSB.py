@@ -13,6 +13,7 @@ import time
 import wave
 import struct
 import audioop
+import itertools
 from sys import byteorder
 from array import array
 import multiprocessing as mp
@@ -37,6 +38,7 @@ def start_listening(triggerSound):
 	inp.setformat(alsaaudio.PCM_FORMAT_S16_LE)
 	inp.setperiodsize(conf.SOUND_CHUNKSIZE)
 
+	lastTriggerMessage = -1
 	while(True):
 		l, data = inp.read()
 		a = numpy.fromstring(data, numpy.int16)
@@ -44,7 +46,62 @@ def start_listening(triggerSound):
 		val = numpy.abs(a).mean()
 		if val > conf.SOUND_THRESHOLD:
 			triggerSound.value = time.time()
-			print("[SOUND] Sound trigger", val, " at ", triggerSound.value)
+			if (triggerSound.value - lastTriggerMessage > 0.1):
+				lastTriggerMessage = time.time()
+				print("[SOUND] Sound trigger", val, " at ", triggerSound.value)
+
+def start_recording_alsa(triggerSound, audioFilenameTS):
+	print("############################ SOUND ###############################")
+	print("Starting to listen with threshold=", conf.SOUND_THRESHOLD)
+	print("##################################################################")
+	inp = alsaaudio.PCM(alsaaudio.PCM_CAPTURE, alsaaudio.PCM_NONBLOCK) #, "sysdefault:CARD=Audio"
+	inp.setchannels(conf.SOUND_CHANNELS)
+	inp.setrate(conf.SOUND_RATE)
+	inp.setformat(alsaaudio.PCM_FORMAT_S16_LE)
+	inp.setperiodsize(conf.SOUND_CHUNKSIZE)
+	
+	lastTriggerMessage = -1
+
+	for filename in itertools.cycle(conf.AUDIO_FILENAMES):
+		i = getFileIndex(filename)
+		audioFilenameTS[i] = time.time()	
+
+		print("[SOUND] Recording to file: " + filename)
+		total = 0
+		#filewriter = open(filename, 'wb')
+		w = wave.open(filename, 'w')
+		w.setnchannels(conf.SOUND_CHANNELS)
+		w.setsampwidth(2)
+		w.setframerate(conf.SOUND_RATE*2)
+		w.setnframes(conf.CAMERA_CAP_LEN * conf.SOUND_RATE)
+
+		while total < conf.SOUND_RATE * conf.CAMERA_CAP_LEN:
+			l, data = inp.read()
+			#print(len(data))
+			#print(data)
+			count = -1
+			dataLen = len(data)
+			if (dataLen < 32):
+				count = 0
+			else:
+				count = 32
+
+			a = numpy.fromstring(data, dtype=numpy.int16, count=count)
+			if l:
+				total += l
+				#filewriter.write(data)
+				w.writeframes(data)
+				#time.sleep(.001)
+			val = numpy.abs(a).mean()
+			if val > conf.SOUND_THRESHOLD:
+				triggerSound.value = time.time()
+
+				if (triggerSound.value - lastTriggerMessage > 0.1):
+					lastTriggerMessage = time.time()
+					print("[SOUND] Sound trigger", val, " at ", triggerSound.value)
+		#filewriter.close()
+		w.close()
+
 
 def start_recording(triggerSound, audioFilenameTS):
 	chunksize = conf.SOUND_CHUNKSIZE
@@ -81,9 +138,12 @@ def start_recording(triggerSound, audioFilenameTS):
 		w.writeframes(data_all)
 		w.close()
 
+
+
 if __name__ == '__main__':
 	# Only executed if explicitely calling this file: use for testing purposes
 
-	start_listening(conf.SOUND_TRIGGER_SOUND)
+	#start_listening(conf.SOUND_TRIGGER_SOUND)
 	#start_recording(conf.SOUND_TRIGGER_SOUND, conf.AUDIO_FILENAMES_TS)
+	start_recording_alsa(conf.SOUND_TRIGGER_SOUND, conf.AUDIO_FILENAMES_TS)
    

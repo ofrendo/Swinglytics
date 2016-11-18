@@ -4,7 +4,7 @@ import cv2
 import golfConfig as conf
 
 class BasicMotionDetector:
-	def __init__(self, accumWeight=0.5, deltaThresh=5, minArea=5000):
+	def __init__(self, accumWeight=0.5, deltaThresh=5, minArea=1000):
 		# determine the OpenCV version, followed by storing the
 		# the frame accumulation weight, the fixed threshold for
 		# the delta image, and finally the minimum area required
@@ -55,10 +55,10 @@ class BasicMotionDetector:
 			(x, y, w, h) = cv2.boundingRect(c)
 			# inside the defined boundaries
 			if xmin <= x and ymin <= y and x + w <= xmax  and y + h <= ymax:
-				# and exceeds the minimum area
-				print('inside the rectangle')
+			# and exceeds the minimum area
+			#print('inside the rectangle')
 				if cv2.contourArea(c) > self.minArea:
-					print('motion inside the box')
+					# print('motion inside the box')
 					locs.append(c)
 
 		# return the set of locations

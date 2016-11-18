@@ -8,7 +8,7 @@ import struct
 import cv2
 from camera import start_record
 from multi_camera import start_md
-from soundListenerUSB import start_listening, start_recording
+from soundListenerUSB import start_listening, start_recording, start_recording_alsa
 import golfConfig as conf
 import handlerCloudStorage as storage
 
@@ -57,9 +57,9 @@ def createSwingClip(tsMiddle, cameraFilenameTS):
 			filename0 = conf.CAMERA_FILENAMES1[(i-1) % len(conf.CAMERA_FILENAMES1)]
 			filename1 = conf.CAMERA_FILENAMES1[i]
 			filename2 = conf.CAMERA_FILENAMES1[(i+1) % len(conf.CAMERA_FILENAMES1)]
-			# soundname0 = conf.AUDIO_FILENAMES[(i-1) % len(conf.AUDIO_FILENAMES)]
-			# soundname1 =  conf.AUDIO_FILENAMES[i]
-			# soundname2 =  conf.AUDIO_FILENAMES[(i+1) % len(conf.AUDIO_FILENAMES)]
+			soundname0 = conf.AUDIO_FILENAMES[(i-1) % len(conf.AUDIO_FILENAMES)]
+			soundname1 =  conf.AUDIO_FILENAMES[i]
+			soundname2 =  conf.AUDIO_FILENAMES[(i+1) % len(conf.AUDIO_FILENAMES)]
 			break
 
 
@@ -92,25 +92,25 @@ def createSwingClip(tsMiddle, cameraFilenameTS):
 	# First need to convert to mp4 ("mux" or "creating a container"): rpi stores it as "raw" h264
 	# (http://stackoverflow.com/questions/38112711/how-to-get-the-duration-bitrate-of-a-h264-file-with-avconv-ffmpeg)
 	if case == 1:
-		convertToMP4(filename1)
-		# combineMP4withWAV(filename1, soundname1)
+		#convertToMP4(filename1)
+		combineMP4withWAV(filename1, soundname1)
 		cutMP4(filename1, 
 			diffToFirstClipStart-clipStartToMiddleDuration, 
 			clipStartToMiddleDuration+clipMiddleToEndDuration,
 			"rpi/vid/swingClip.mp4")
 	elif case == 2:
-		convertToMP4(filename1)
-		# combineMP4withWAV(filename1, soundname1)
-		convertToMP4(filename2)
-		# combineMP4withWAV(filename2, soundname2)
+		#convertToMP4(filename1)
+		combineMP4withWAV(filename1, soundname1)
+		#convertToMP4(filename2)
+		combineMP4withWAV(filename2, soundname2)
 		cutMP4(filename1, diffToFirstClipStart-clipStartToMiddleDuration, None, "rpi/vid/swingClipP1.mp4")
 		cutMP4(filename2, 0, clipMiddleToEndDuration - (conf.CAMERA_CAP_LEN-diffToFirstClipStart), "rpi/vid/swingClipP2.mp4")
 		concatenateMP4("rpi/vid/swingClipP1.mp4", "rpi/vid/swingClipP2.mp4")
 	elif case == 3:
-		convertToMP4(filename0)
-		# combineMP4withWAV(filename0, soundname0)
-		convertToMP4(filename1)
-		# combineMP4withWAV(filename1, soundname1)
+		#convertToMP4(filename0)
+		combineMP4withWAV(filename0, soundname0)
+		#convertToMP4(filename1)
+		combineMP4withWAV(filename1, soundname1)
 		cutMP4(filename0, conf.CAMERA_CAP_LEN- (clipStartToMiddleDuration-diffToFirstClipStart), None, "rpi/vid/swingClipP1.mp4")
 		cutMP4(filename1, 0, diffToFirstClipStart + clipMiddleToEndDuration, "rpi/vid/swingClipP2.mp4")
 		concatenateMP4("rpi/vid/swingClipP1.mp4", "rpi/vid/swingClipP2.mp4")
@@ -182,9 +182,15 @@ def createThumbnail(filename):
 	subprocess.call(["ffmpeg -loglevel quiet -y -i " + filename + " -ss " + timeString +" -vframes 1 " + target], shell=True)
 
 def combineMP4withWAV(videoname, soundname):
+	print("[HANDLER] Adding sound=", soundname, " to video=", videoname, "...")
+	# Cut audio because it is 0.5 seconds too late otherwise
+	#subprocess.call(["ffmpeg -y -i " + soundname + " -ss 0.5 -t 10 " + soundname], shell = True)
+
 	# -itsoffset 00:00:00.00 to delay audio
 	# -vcodec & -acodec define video and audio codec used
-	subprocess.call(['ffmpeg -loglevel quiet -y -i ' + videoname + ' -i ' + soundname + ' -c:v copy -c:a aac videoname'], shell = True)
+	combineString = "ffmpeg -y -r " + str(conf.CAMERA_FRAMERATE) + " -i " + videoname + ' -ss 00:00:00.500 -t 00:00:09.500 -i ' + soundname + ' -c:v copy -c:a aac ' + videoname.replace("h264", "mp4")
+	print(combineString)
+	subprocess.call([combineString], shell = True)
 
 if __name__ == '__main__':
 	# Value: d for double precision float, b for boolean, i for int
@@ -194,10 +200,10 @@ if __name__ == '__main__':
 	processCameraPi = mp.Process(name="processCameraPi", target=start_record, args=(triggerMotion1, conf.CAMERA_FILENAMES_TS1))
 	processCameraMD = mp.Process(name="processCameraMD", target=start_md, args=(2, triggerMotion1, conf.CAMERA_FILENAMES1, conf.CAMERA_FILENAMES_TS1))
 	#processSound = mp.Process(name="processSound", target=start_listening, args=(triggerSound, conf.PREP_FILE_LENGTH/60, 'rpi/sound/','.wav'))
-	processSound = mp.Process(name="processSound", target=start_listening, args=(triggerSound,))
+	processSound = mp.Process(name="processSound", target=start_recording_alsa, args=(triggerSound,conf.AUDIO_FILENAMES_TS))
 	#processSound = mp.Process(name="processSound", target=start_recording, args=(triggerSound, conf.AUDIO_FILENAMES_TS))
 
-	# processCameraPi.daemon = True
+	processCameraPi.daemon = True
 	processCameraMD.daemon = True
 	processSound.daemon = True
 	

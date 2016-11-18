@@ -30,10 +30,10 @@ RECORD_FOLDER = "rpi/vid/"
 AUDIO_ENDING = ".wav"
 
 ## Sound stuff
-SOUND_THRESHOLD = 400 # how loud does the noise have to be
+SOUND_THRESHOLD = 600 # how loud does the noise have to be
 SOUND_TRIGGER_SOUND = mp.Value("d", -1)
 SOUND_CHANNELS = 1
-SOUND_RATE = 44100
+SOUND_RATE = 44100 #22050
 SOUND_CHUNKSIZE = 1024
 AUDIO_FILENAMES = ("rpi/vid/cap1_1" + AUDIO_ENDING, 
              "rpi/vid/cap1_2" + AUDIO_ENDING,
@@ -57,12 +57,13 @@ HANDLER_MIN_SWING_DELAY = 1
 ## Networking stuff
 STATION_ID = 1
 #SERVER_URL = "http://httpbin.org" # test page, will return anything sent to it
-SERVER_URL = "http://138.68.108.39:3000" # digital ocean server
-#SERVER_URL = "http://192.168.178.76:3000" # desktop pc at home
+#SERVER_URL = "http://138.68.108.39:3000" # digital ocean server
+SERVER_URL = "http://192.168.178.76:3000" # desktop pc at home
+#SERVER_URL = "https://192.168.188.26:3000" # laptop in mobile
 
-SERVER_USE_FTP = False  # Should ftp be used for file upload? If false AWS will be used
+SERVER_USE_FTP = True  # Should ftp be used for file upload? If false AWS will be used
 SERVER_FTP = "192.168.178.76" # desktop pc at home
-
+#SERVER_FTP = "192.168.188.26"
 
 
 ## Prep stuff

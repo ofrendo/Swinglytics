@@ -20,8 +20,8 @@ import golfConfig as conf
 BUCKET_NAME = "hopinone"
 
 # connections
-s3 = boto3.resource("s3", config=Config(signature_version='s3v4'))
-bucket = s3.Bucket(BUCKET_NAME)
+#s3 = boto3.resource("s3", config=Config(signature_version='s3v4'))
+#bucket = s3.Bucket(BUCKET_NAME)
 
 
 # see http://stackoverflow.com/questions/2673385/how-to-generate-random-number-with-the-specific-length-in-python
@@ -66,7 +66,7 @@ def generateSignature(plaintext):
 # Sends a GET request for this station to check if a user is currently logged in
 def sendLoginCheck():
 	url = conf.SERVER_URL + "/api/v1/checkuser/" + str(conf.STATION_ID)
-	response = requests.get(url)
+	response = requests.get(url, verify=False)
 	userID = response.text
 	#print(body["userID"])
 	return userID
@@ -133,14 +133,10 @@ def uploadFile(videoName, thumbnailName, tsMiddle, loginCheck=True):
 	}
 	#print(payload)
 	headers = {"content-type": "application/json"}
-	response = requests.post(url, data=json.dumps(payload), headers=headers)
+	response = requests.post(url, data=json.dumps(payload), headers=headers, verify=False)
 	print("[STORAGE] Made POST request.")
-	print(response.text)
-	#data = response.json()
-	#print(data)
-	#data2 = json.loads(data["data"])
-	#print(data2["stationID"])
-
+	#print(response.text)
+	
 
 if __name__ == '__main__':
 	# Only executed if explicitely calling this file: use for testing purposes
