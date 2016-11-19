@@ -41,7 +41,8 @@ def writeToFile(camera, filename, cameraFilenameTS):
     i = getFileIndex(filename)
     cameraFilenameTS[i] = time.time()
 
-    print("[PICAMERA] Recording to",  filename, "at", time.time())
+    print("[PICAMERA] Recording to",  filename, "at", time.time(), "with file index=", str(i))
+    conf.CAMERA_TRIGGER_FILENAMES_INDEX.value = i # set filenames for camera so that usbSoundListener can use it to check whether to start writing to a new file
     camera.wait_recording(conf.CAMERA_CAP_LEN)
 
 def start_record(triggerMotion, cameraFilenameTS):

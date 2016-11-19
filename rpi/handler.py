@@ -188,7 +188,8 @@ def combineMP4withWAV(videoname, soundname):
 
 	# -itsoffset 00:00:00.00 to delay audio
 	# -vcodec & -acodec define video and audio codec used
-	combineString = "ffmpeg -y -r " + str(conf.CAMERA_FRAMERATE) + " -i " + videoname + ' -ss 00:00:00.500 -t 00:00:09.500 -i ' + soundname + ' -c:v copy -c:a aac ' + videoname.replace("h264", "mp4")
+	# -ss 00:00:00.500 -t 00:00:09.500 this can be used for audio input (start and duration)
+	combineString = "ffmpeg -y -r " + str(conf.CAMERA_FRAMERATE) + " -i " + videoname + ' -i ' + soundname + ' -c:v copy -c:a aac ' + videoname.replace("h264", "mp4")
 	print(combineString)
 	subprocess.call([combineString], shell = True)
 

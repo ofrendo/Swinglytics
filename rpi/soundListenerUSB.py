@@ -60,25 +60,31 @@ def start_recording_alsa(triggerSound, audioFilenameTS):
 	inp.setformat(alsaaudio.PCM_FORMAT_S16_LE)
 	inp.setperiodsize(conf.SOUND_CHUNKSIZE)
 	
-	lastTriggerMessage = -1
-
+	lastTriggerMessage = -1 # when was the trigger message last written to the console?
+	currentFileIndex = -1 # which file is being written to currently?
 	for filename in itertools.cycle(conf.AUDIO_FILENAMES):
 		i = getFileIndex(filename)
 		audioFilenameTS[i] = time.time()	
+		currentFileIndex = i # change to match camera
 
-		print("[SOUND] Recording to file: " + filename)
+		print("[SOUND] Recording to file: " + filename + ", file index=" + str(currentFileIndex))
 		total = 0
-		#filewriter = open(filename, 'wb')
 		w = wave.open(filename, 'w')
 		w.setnchannels(conf.SOUND_CHANNELS)
 		w.setsampwidth(2)
 		w.setframerate(conf.SOUND_RATE*2)
 		w.setnframes(conf.CAMERA_CAP_LEN * conf.SOUND_RATE)
 
-		while total < conf.SOUND_RATE * conf.CAMERA_CAP_LEN:
+		while currentFileIndex == conf.CAMERA_TRIGGER_FILENAMES_INDEX.value: #total < conf.SOUND_RATE * conf.CAMERA_CAP_LEN:
 			l, data = inp.read()
-			#print(len(data))
-			#print(data)
+
+			# Write data to file
+			if l:
+				total += l
+				w.writeframes(data)
+
+			# Check if threshold was reached
+			# How many bytes should be read? Max 32, if this part is too slow the length can also be larger
 			count = -1
 			dataLen = len(data)
 			if (dataLen < 32):
@@ -87,11 +93,6 @@ def start_recording_alsa(triggerSound, audioFilenameTS):
 				count = 32
 
 			a = numpy.fromstring(data, dtype=numpy.int16, count=count)
-			if l:
-				total += l
-				#filewriter.write(data)
-				w.writeframes(data)
-				#time.sleep(.001)
 			val = numpy.abs(a).mean()
 			if val > conf.SOUND_THRESHOLD:
 				triggerSound.value = time.time()
@@ -99,7 +100,6 @@ def start_recording_alsa(triggerSound, audioFilenameTS):
 				if (triggerSound.value - lastTriggerMessage > 0.1):
 					lastTriggerMessage = time.time()
 					print("[SOUND] Sound trigger", val, " at ", triggerSound.value)
-		#filewriter.close()
 		w.close()
 
 

@@ -23,6 +23,7 @@ CAMERA_MIN_NUMBER_MOTION_VECTORS = 20
 
 CAMERA_TRIGGER_MOTION1 = mp.Value("d", -1) # saves a shared timestamp when the last motion detection occured (picamera)
 CAMERA_TRIGGER_MOTION2 = mp.Value("d", -1) # saves a shared timestamp when the last motion detection occured (action cam)
+CAMERA_TRIGGER_FILENAMES_INDEX = mp.Value("d", 0) # saves which index of CAMERA_FILENAMES is currently being written to
 
 AUDIO_DURATION_MINUTES = 10 # used for audio recording
 AUDIO_DURATION_SECONDS = 10
