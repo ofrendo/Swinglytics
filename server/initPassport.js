@@ -77,7 +77,7 @@ passport.use('register', new LocalStrategy({
           // save the user
           newUser.save(function(err) {
             if (err){
-              console.log('Error in Saving user: '+err);  
+              console.log('[POST /user/register] Error in Saving user: '+err);  
               throw err;  
             }
             console.log('[POST /user/register] User Registration succesful');    

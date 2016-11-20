@@ -7,7 +7,7 @@ var Station = require("../models/stationModel.js");
 
 // Calls for adding and checking stations (called manually)
 router.get("/", function(req, res, next) {
-	Station.find({}, function(err, stations) {
+	getAllStations(function(err, stations) {
 		if (err) {
 			res.status(500).send(err);
 			return;
@@ -16,17 +16,23 @@ router.get("/", function(req, res, next) {
 	});
 });
 
+router.get("/:stationID", function(req, res, next) {
+	getStation(req.params.stationID, function(err, station) {
+		if (err) {
+			res.status(500).send(err);
+			return;
+		}
+		res.status(200).send(station);
+	});
+});
+
 // Create a new station
 router.post("/", function(req, res, next) {
 
-	var station = new Station();
-	station.stationID = req.body.stationID;
-	station.currentUserID = "";
-	station.publicKey = req.body.publicKey;
-	station.save(function(err) {
+	createStation(req.body.stationID, req.body.publicKey, function(err) {
 		if (err) {
 			res.status(500).send(err);
-			console.log("Error creating a new station: " + err);
+			console.log("[POST /station] Error creating a new station: " + err);
 			return;
 		}
 		res.status(200).send("");
@@ -34,6 +40,19 @@ router.post("/", function(req, res, next) {
 
 });
 
+router.delete("/:stationID", function(req, res, next) {
+	deleteStation(req.params.stationID, function(err) {
+		if (err) {
+			res.status(500).send(err);
+			return;
+		}	
+		res.status(200).send("");
+	})
+});
+
+function getAllStations(callback) {
+	Station.find({}, callback);
+}
 
 function getStation(stationID, callback) {
 	Station.findOne({"stationID": stationID}, callback);
