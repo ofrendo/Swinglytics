@@ -25,6 +25,7 @@ def getFileIndex(filename):
         if filename == conf.AUDIO_FILENAMES[i]:
             return i
 
+# Method used for just listening and triggering sound, not recording it
 def start_listening(triggerSound):
 	print("############################ SOUND ###############################")
 	print("Starting to listen with threshold=", conf.SOUND_THRESHOLD)
@@ -50,6 +51,7 @@ def start_listening(triggerSound):
 				lastTriggerMessage = time.time()
 				print("[SOUND] Sound trigger", val, " at ", triggerSound.value)
 
+# Method used for Raspberry Pi 3
 def start_recording_alsa(triggerSound, audioFilenameTS):
 	print("############################ SOUND ###############################")
 	print("Starting to listen with threshold=", conf.SOUND_THRESHOLD)
@@ -102,7 +104,7 @@ def start_recording_alsa(triggerSound, audioFilenameTS):
 					print("[SOUND] Sound trigger", val, " at ", triggerSound.value)
 		w.close()
 
-
+# Method used for Banana Pi
 def start_recording(triggerSound, audioFilenameTS):
 	chunksize = conf.SOUND_CHUNKSIZE
 	format = pyaudio.paInt16

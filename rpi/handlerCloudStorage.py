@@ -31,7 +31,6 @@ def random_with_N_digits(n):
 	return randint(range_start, range_end)
 
 def generateSignature(plaintext):
-	# SOURCE
 	# SHA256 of plaintext
 	plaintext = "1_1477334965_68865"
 	h = SHA256.new()
@@ -68,7 +67,6 @@ def sendLoginCheck():
 	url = conf.SERVER_URL + "/api/v1/checkuser/" + str(conf.STATION_ID)
 	response = requests.get(url, verify=False)
 	userID = response.text
-	#print(body["userID"])
 	return userID
 
 
@@ -135,8 +133,6 @@ def uploadFile(videoName, thumbnailName, tsMiddle, loginCheck=True):
 	headers = {"content-type": "application/json"}
 	response = requests.post(url, data=json.dumps(payload), headers=headers, verify=False)
 	print("[STORAGE] Made POST request.")
-	#print(response.text)
-	
 
 if __name__ == '__main__':
 	# Only executed if explicitely calling this file: use for testing purposes
