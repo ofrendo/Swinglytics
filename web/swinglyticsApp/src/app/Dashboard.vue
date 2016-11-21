@@ -1,0 +1,233 @@
+<template>
+  <div>
+  <div class="container-fluid swinglytics-navbar">
+    <div class="container">
+      <div class="navbar-custom ">
+        <div class="swinglytics-brand">My Dashboard</div>
+      </div>
+    </div>
+  </div>
+<div class="container dashboard-body">
+    <div class="row">
+      <div class="col-xs-12 col-lg-12 dashboard-wrapper">
+        <div class="dash-section-title ">
+          <span class="dst-span orange-border">Recent Training</span><span class="dash-section-sub blue-text" id="spanRecentSwingCount">X swings</span>
+        </div>
+        <div class="video-thumbnail-bar">
+          <div class="video-thumbnail-bar-info">
+            Wed. October 25, 2016 at 14:51:29 PM
+          </div>
+          <div id="divRecentThumbnailsContainer" class="row col-thumbnail">
+            <!--  -->
+
+            <div id="divRecentThumbnailsPlay" class="col-xs-3   icon">
+              <a href=""><i class="fa fa-play-circle play-blue" aria-hidden="true"></i></a>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="col-xs-12 col-lg-12 dashboard-wrapper">
+        <div class="dash-section-title">
+          <span class="dst-span">Favorites</span><span class="dash-section-sub green-text" id="spanFavoriteSwingCount">Y swings</span>
+        </div>
+        <div class="video-thumbnail-bar">
+          <div class="video-thumbnail-bar-info">
+            Updated: 2 days ago
+          </div>
+          <div id="divFavouriteThumbnailsContainer" class="row col-thumbnail">
+            <!-- -->
+            <div id="divFavouriteThumbnailsPlay" class="col-xs-3   icon">
+              <i class="fa fa-play-circle play-green" aria-hidden="true"></i>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+</div>
+
+    <nav class="navbar navbar-default navbar-fixed-bottom text-center footer">
+      <div class="container">
+
+<button v-on:click="navSessions" class="col-xs-4"><i class="fa fa-check fa-2x"></i><br/>Sessions</button>
+<button v-on:click="navDashboard" class="col-xs-4"><i class="fa fa-dashcube fa-2x"></i><br/>Dashboard</button>
+<button v-on:click="navStationScan" class="col-xs-4"><i class="fa fa-qrcode fa-2x" aria-hidden="true"></i><br/>QR Code</button>
+
+      </div>
+    </nav>
+
+  </div>
+
+</template>
+
+<script>
+
+function getSwingLabel(n) {
+  return (n === 1) ?
+          "1 swing" :
+          n + " swings";
+}
+
+export default {
+  data () {
+    return {
+      email: 'kingkuta@example.com',
+      pass: '',
+      error: false
+    }
+  },
+
+  created: function () {
+    // `this` points to the vm instance
+    var that = this;
+    //sendGetRequest
+    var url = "/api/v1/user/sessions";
+    doRequest(url, "GET", {}, function(http) {
+
+      var sessions = JSON.parse(http.responseText);
+      console.log(sessions);
+
+      // Add last session thumbnails
+      var lastSessionVideos = sessions[sessions.length-1].videos;
+      var divContainer = document.querySelector("#divRecentThumbnailsContainer");
+      var playContainer = document.querySelector("#divRecentThumbnailsPlay");
+      document.getElementById("spanRecentSwingCount").innerHTML = getSwingLabel(lastSessionVideos.length);
+      for (var i=0; i<Math.min(lastSessionVideos.length, 3);i++) {
+        var div = document.createElement("div");
+        div.classList.add("col-xs-3");
+        var img = document.createElement("img");
+        img.dataset.videoIndex = i + "";
+        img.dataset.sessionID = sessions[sessions.length-1].sessionID;
+        img.classList.add("img-responsive");
+        img.classList.add("video-thumbnail");
+        img.classList.add("video-thumbnail-clickable");
+        img.classList.add("img-circle");
+        img.src = buildThumbnailURL(lastSessionVideos[i].videoID);
+
+        div.appendChild(img);
+        divContainer.insertBefore(div, playContainer);
+      }
+      // Add placeholder if any missing
+      for (var i=lastSessionVideos.length-3; i<0; i++) {
+        var div = document.createElement("div");
+        div.classList.add("col-xs-3");
+        var img = document.createElement("img");
+        img.classList.add("img-responsive");
+        img.classList.add("video-thumbnail");
+        img.classList.add("img-circle");
+        img.src = "app/images/thumbnailPlaceholder.png";
+
+        div.appendChild(img);
+        divContainer.insertBefore(div, playContainer);
+      }
+
+      // Link player
+      playContainer.addEventListener("click", function(e) {
+        var sessionID = sessions[sessions.length-1].sessionID;
+        that.$router.replace(that.$route.query.redirect || "/Swing?sessionID=" + sessionID);
+      });
+
+
+      // Add favourite videos
+      var divContainer = document.querySelector("#divFavouriteThumbnailsContainer");
+      var playContainer = document.querySelector("#divFavouriteThumbnailsPlay");
+      var favouriteVideos = [];
+      var videosAppended = 0;
+      for (var i=0;i<sessions.length;i++) {
+        for (var j=0;j<sessions[i].videos.length;j++) {
+          if (sessions[i].videos[j].rating === 1) {
+            favouriteVideos.push(sessions[i].videos[j]);
+          }
+
+          if (sessions[i].videos[j].rating === 1 && videosAppended < 3) {
+            var div = document.createElement("div");
+            div.classList.add("col-xs-3");
+            var img = document.createElement("img");
+            img.dataset.videoIndex = j + "";
+            img.dataset.sessionID = sessions[i].sessionID;
+            img.classList.add("img-responsive");
+            img.classList.add("video-thumbnail");
+            img.classList.add("video-thumbnail-clickable");
+            img.classList.add("img-circle");
+            img.src = buildThumbnailURL(sessions[i].videos[j].videoID);
+
+            div.appendChild(img);
+            divContainer.insertBefore(div, playContainer);
+            videosAppended++;
+          }
+        }
+      }
+      document.getElementById("spanFavoriteSwingCount").innerHTML = getSwingLabel(favouriteVideos.length);
+
+      // Add placeholder if any missing
+      for (var i=videosAppended-3; i<0; i++) {
+        var div = document.createElement("div");
+        div.classList.add("col-xs-3");
+        var img = document.createElement("img");
+        img.classList.add("img-responsive");
+        img.classList.add("video-thumbnail");
+        img.classList.add("img-circle");
+        img.src = "app/images/thumbnailPlaceholder.png";
+
+        div.appendChild(img);
+        divContainer.insertBefore(div, playContainer);
+      }
+
+      // Link player
+      playContainer.addEventListener("click", function(e) {
+        var sessionID = sessions[sessions.length-1].sessionID;
+        console.log("TODO")
+        //that.$router.replace(that.$route.query.redirect || "/SingleSession?sessionID=" + sessionID);
+      });
+
+
+      var allImages = document.querySelectorAll(".video-thumbnail-clickable");
+      for (var i=0;i<allImages.length;i++) {
+        allImages[i].addEventListener("click", function(e) {
+          var img = e.target;
+
+          that.$router.replace(that.$route.query.redirect || "/Swing?sessionID=" + img.dataset.sessionID + "&videoIndex=" + img.dataset.videoIndex);
+        });
+      }
+
+
+    });
+
+
+  },
+
+  methods: {
+
+  navSessions: function (event) {
+    this.$router.replace(this.$route.query.redirect || '/sessions');
+  },
+
+  navDashboard: function (event) {
+    this.$router.replace(this.$route.query.redirect || '/dashboard');
+  },
+
+  navStationScan: function (event) {
+    this.$router.replace(this.$route.query.redirect || '/StationScan');
+
+  },
+
+  //end login
+  },
+
+
+
+
+  //end method
+  }
+
+
+
+
+
+
+</script>
