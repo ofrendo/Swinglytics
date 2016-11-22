@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <h2>Onboarding -- Will become a slider with nice Animations</h2>
+  <div class="container loginBody">
+
 
     <div class="row onboard">
       <div class="onboard-welcome">Welcome!</div>
@@ -38,7 +38,7 @@ export default {
 
     next () {
 
-this.$router.replace(this.$route.query.redirect || '/onboarding2');
+this.$router.replace(this.$route.query.redirect || '/dashboard');
 
     }
 

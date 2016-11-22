@@ -1,6 +1,6 @@
 <template>
   <div>
-      <div class="container-fluid swinglytics-navbar-alt">
+      <div class="container-fluid swinglytics-navbar">
       <div class="container">
         <div class="navbar-custom ">
           <div class="swinglytics-brand"><span>Swing Analyzer</span> <span id="swingAnalyzerCount" class="swing-count">{{parseInt(videoIndex)+parseInt(1)}} of {{session.videos.length}}</span></div>
@@ -9,7 +9,7 @@
     </div>
 
 
-    <div class="container col-nopad video-container" style="overflow-y: hidden">
+    <div class="container col-nopad video-container">
   <div clas="row">
     <div class="col-xs-12 col-nopad">
 
@@ -20,7 +20,7 @@
             Your browser does not support the video tag.
         </video>
         <canvas id="swingVideoCanvasOverlay"></canvas>
-        <button id="canvasNewLine" class="canvas-btn-newLine btn"><i class="fa fa-pencil" aria-hidden="true"></i></button>
+        <button id="canvasNewLine" class="canvas-btn-newLine btn"><i class="fa fa-paint-brush" aria-hidden="true"></i></button>
         <button id="canvasErase" class="canvas-btn-erase btn"><i class="fa fa-eraser" aria-hidden="true"></i></button>
         <!--<div id="favStar" class="favorite-hover" onClick="addRemoveFavorite()"><i class="fa fa-star-o fa-star-o-cust" aria-hidden="true"></i></div>-->
       </div>
@@ -56,9 +56,9 @@
 <nav class="navbar navbar-default navbar-fixed-bottom text-center footer">
   <div class="container">
 
-<button v-on:click="navSessions" class="col-xs-4"><i class="fa fa-check fa-2x"></i><br/>Sessions</button>
-<button v-on:click="navDashboard" class="col-xs-4"><i class="fa fa-dashcube fa-2x"></i><br/>Dashboard</button>
-<button v-on:click="navStationScan" class="col-xs-4"><i class="fa fa-qrcode fa-2x" aria-hidden="true"></i><br/>QR Code</button>
+<button v-on:click="navSessions" class="col-xs-4"><i class="fa fa-video-camera fa-2x "></i><br/>Sessions</button>
+<button v-on:click="navDashboard" class="col-xs-4"><i class="fa fa-th-large fa-2x"></i><br/>Dashboard</button>
+<button v-on:click="navStationScan" class="col-xs-4"><i class="fa fa-qrcode fa-2x" aria-hidden="true"></i><br/>QR Scan</button>
 
   </div>
 </nav>
@@ -155,9 +155,13 @@ export default {
 
         //do API Call to set favorite
         var that = this;
-        var url = "/api/v1/videos/";
+
+        var vidID = that.session.videos[that.videoIndex].videoID;
+        console.log(vidID);
+
+        var url = "/api/v1/user/videos/" + vidID;
         var jsonParams = {
-          videoID: videoID,
+          videoID: vidID,
           rating: 1
         };
 
@@ -170,7 +174,7 @@ export default {
             if(http.status === 200){
               console.log(that);
               // add to favorite and replace star
-              that.document.getElementById("favStar").innerHTML = '<i class="fa fa-star fa-star-cust" aria-hidden="true"></i>';
+              document.getElementById("favStar").innerHTML = '<i class="fa fa-star fa-star-cust" aria-hidden="true"></i>';
             }
         });
       }
@@ -178,11 +182,15 @@ export default {
       //if not a favorite check via classes
       else{
 
+
         //do API Call
         var that = this;
-        var url = "/api/v1/videos/";
+
+        var vidID = that.session.videos[that.videoIndex].videoID;
+
+        var url = "/api/v1/user/videos/" + vidID;
         var jsonParams = {
-          videoID: videoID,
+          videoID: vidID,
           rating: 0
         };
 
@@ -195,7 +203,7 @@ export default {
             if(http.status === 200){
               console.log(that);
               /// delete from favorites
-              that.document.getElementById("favStar").innerHTML = '<i class="fa fa-star-o fa-star-o-cust" aria-hidden="true"></i>'
+              document.getElementById("favStar").innerHTML = '<i class="fa fa-star-o fa-star-o-cust" aria-hidden="true"></i>'
             }
         });
       }

@@ -1,6 +1,5 @@
 <template>
-  <div>
-    <h2>Onboarding -- Will become a slider with nice Animations</h2>
+  <div class="container loginBody">
 
 
 

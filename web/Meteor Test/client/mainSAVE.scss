@@ -11,18 +11,14 @@ $defaultText: #555;
 $lightgreen: #5bcc89;
 $darkgreen: #58b37d;
 
-$lightorange: #f1c40f;
+$lightorange: #e2a851;
 $darkorange: #b38645;
-
-// Color Palette 2
-$black1: #313131;
-$black2: #232323;
 
 
 // body
 body{
   font-family: 'Roboto', sans-serif;
-  background-color: #f8f8f8;
+  background-color: #fff;
   //background-image: url('../images/bg.jpg');
 }
 
@@ -47,10 +43,10 @@ a:link{text-decoration: none; color: inherit !important;}
 .swinglytics-navbar{
   //background-color: $navbarBG;
   background: $lightgreen;
-  background: -webkit-linear-gradient($black2, $black2);
-  background: -o-linear-gradient($black2, $black2);
-  background: -moz-linear-gradient($black2, $black2);
-  background: linear-gradient($black2, $black2);
+  background: -webkit-linear-gradient($lightgreen, $darkgreen);
+  background: -o-linear-gradient($lightgreen, $darkgreen);
+  background: -moz-linear-gradient($lightgreen, $darkgreen);
+  background: linear-gradient($lightgreen, $darkgreen);
   border-radius: 0px;
   color: $defaultText !important;
   border-top:0px;
@@ -59,7 +55,7 @@ a:link{text-decoration: none; color: inherit !important;}
   border: none;
   margin-bottom: 0px;
   padding: 5px 0px 5px 0px;
-  border-bottom: 3px solid $darkgreen;
+  border-bottom: 1px solid $darkgreen;
 }
 
 
@@ -381,13 +377,6 @@ i.play-green{
   font-weight: 300;
 }
 
-.footer button{
-  border-radius: 0px;
-  background: white;
-  box-shadow: none;
-  border: none;
-}
-
 i{color: #555;}
 
 
@@ -419,7 +408,6 @@ i{color: #555;}
 
   .video-thumbnail{
     max-width: 50px;
-    height: 50px;
   }
 
   .video-thumbnail-bar-info{
@@ -494,8 +482,8 @@ i{color: #555;}
 
   // video player
   .move-up{
-    //position: relative;
-    //top: -38px;
+    position: relative;
+    top: -38px;
   }
 
   .favorite-hover{
@@ -510,23 +498,12 @@ i{color: #555;}
 
 
   .video-wrapper{
-    //height: 50vh !important;
-    //height: 200px;
-    background: #171717;
+    height: 180px !important;
   }
 
   .video-menu-options button{
-    width: 50% !important;
-    background: #166aad;
-    color: white;
-    font-family: lato;
-    font-weight: 300;
-    font-size: 20px;
-    border-top: 1px solid #185a8e !important;
-    border-bottom: 1px solid #224765 !important;
+    width: 33.33% !important;
   }
-
-
 
 }
 
@@ -653,7 +630,7 @@ i{color: #555;}
 }
 
 .video-wrapper{
-  //height: 400px;
+  height: 400px;
 }
 
 .video-controls{
@@ -671,40 +648,41 @@ i{color: #555;}
 }
 
 .btn-play{
-  background: #f8f8f8 !important;
+  background: #2196f3 !important;
+  color: white;
 }
 
 .btn-repeat{
-  background: #f8f8f8 !important;
+  background: #2196f3 !important;
 }
 
 .btn-favorite{
-  background: #f8f8f8 !important;
+  background: #2196f3 !important;
 }
 
 .btn-speed{
-  background: #f8f8f8;
-  color: #555 !important;
-  &:hover{color: white !important; background: #f8f8f8; outline: 0;}
-  &:focus{color: white !important; background: #f8f8f8; outline: 0;}
-  &:active{color: white !important; background: #f8f8f8; outline: 0;}
-  &:active:focus{background:#f8f8f8; outline: 0;}
+  background: #2196f3;
+  color: white !important;
+  &:hover{color: white !important; background: #1b89e0; outline: 0;}
+  &:focus{color: white !important; background: #1b89e0; outline: 0;}
+  &:active{color: white !important; background: #1b89e0; outline: 0;}
+  &:active:focus{background:#1b89e0; outline: 0;}
 }
 
 .btn-speed-active{
-  background: #ccc !important;
+  background: #166aad !important;
 }
 
 .fa-play-cust{
-  color: #555 !important;
+  color: white !important;
 }
 
 .fa-pause-cust{
-  color: #555 !important;
+  color: white !important;
 }
 
 .fa-repeat-cust{
-  color: #555 !important;
+  color: white !important;
 }
 
 // navbar
@@ -733,17 +711,10 @@ i{color: #555;}
   box-sizing: border-box !important;
 }
 .video-menu-options button{
-  width: 50%;
+  width: 33.33%;
   border: 0px;
   border-radius: 0px !important;
   height: 45px;
-  background: $black2;
-  color: white;
-  font-family: lato;
-  font-weight: 300;
-  font-size: 20px;
-  border-top: 1px solid $black1 !important;
-  border-bottom: 1px solid black !important;
 }
 
 .btn-tag{
@@ -856,89 +827,4 @@ i{color: #555;}
 .create-tag-button{
   border-right: 0px;
   border-radius: 0px;
-}
-
-.video-menu-options button.btn-divider{
-  border-right: 1px solid #333 !important;
-}
-
-.video-menu-options button:hover{
-  background: $black2 !important;
-  color: white !important;
-}
-
-.video-menu-options button:focus{
-  color: white !important;
-  outline: 0 !important;
-}
-
-.session-collection-button{
-  width: 100%;
-  background: #f5f5f5;
-
-}
-
-.session-collection-button span.session-number{float: left;}
-
-
-// QR CODE SCAN PAGE
-.camera-select-fallback{
-  width: 100%;
-  border-right: 0px;
-  border-left: 0px;
-  border-radius: 0px;
-  height: 35px;
-  font-size: 16px;
-}
-
-#videoCameraInput {
-  width: 65%;
-}
-
-#canvasHiddenQR {
-  display: none;
-}
-
-.container-qr-code{
-  padding-bottom: 65px;
-}
-
-.canvas-btn-newLine{
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  border-radius: 50%;
-  background: $lightgreen;
-  i{color: white;}
-  height: 40px;
-  width: 40px;
-  text-align: center;
-  &:active:focus{outline: 0;}
-  &:focus{outline: 0;}
-  &:hover{outline: 0;}
-}
-
-.canvas-btn-erase{
-  position: absolute;
-  top: 60px;
-  left: 10px;
-  border-radius: 50%;
-  background: #232323;
-  i{color: white;}
-  height: 40px;
-  width: 40px;
-  text-align: center;
-  &:active:focus{outline: 0;}
-  &:focus{outline: 0;}
-  &:hover{outline: 0;}
-}
-
-hr.dashboard-hr{
-  margin-top: 5px !important;
-  margin-bottom: 5px !important;
-  border-bottom: 1px solid #fff !important;
-}
-
-.fa-is-active{
-  color: $lightgreen;
 }

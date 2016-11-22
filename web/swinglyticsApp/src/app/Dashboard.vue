@@ -11,36 +11,39 @@
     <div class="row">
       <div class="col-xs-12 col-lg-12 dashboard-wrapper">
         <div class="dash-section-title ">
-          <span class="dst-span orange-border">Recent Training</span><span class="dash-section-sub blue-text" id="spanRecentSwingCount">X swings</span>
+          <span class="dst-span orange-border">Recent Training</span><span class="dash-section-sub green-text" id="spanRecentSwingCount">X swings</span>
         </div>
         <div class="video-thumbnail-bar">
-          <div class="video-thumbnail-bar-info">
+          <div class="video-thumbnail-bar-info" id="RecentSwingDate">
             Wed. October 25, 2016 at 14:51:29 PM
           </div>
           <div id="divRecentThumbnailsContainer" class="row col-thumbnail">
             <!--  -->
 
             <div id="divRecentThumbnailsPlay" class="col-xs-3   icon">
-              <a href=""><i class="fa fa-play-circle play-blue" aria-hidden="true"></i></a>
+              <a href=""><i class="fa fa-play-circle play-green" aria-hidden="true"></i></a>
             </div>
           </div>
 
         </div>
 
       </div>
+    </div>
 
+      <hr class="dashboard-hr">
+    <div class="row">
       <div class="col-xs-12 col-lg-12 dashboard-wrapper">
         <div class="dash-section-title">
-          <span class="dst-span">Favorites</span><span class="dash-section-sub green-text" id="spanFavoriteSwingCount">Y swings</span>
+          <span class="dst-span">Favorites</span><span class="dash-section-sub orange-text" id="spanFavoriteSwingCount">Y swings</span>
         </div>
         <div class="video-thumbnail-bar">
-          <div class="video-thumbnail-bar-info">
+          <div class="video-thumbnail-bar-info" >
             Updated: 2 days ago
           </div>
           <div id="divFavouriteThumbnailsContainer" class="row col-thumbnail">
             <!-- -->
             <div id="divFavouriteThumbnailsPlay" class="col-xs-3   icon">
-              <i class="fa fa-play-circle play-green" aria-hidden="true"></i>
+              <i class="fa fa-play-circle play-orange" aria-hidden="true"></i>
             </div>
           </div>
 
@@ -49,14 +52,15 @@
       </div>
 
     </div>
+
 </div>
 
     <nav class="navbar navbar-default navbar-fixed-bottom text-center footer">
       <div class="container">
 
-<button v-on:click="navSessions" class="col-xs-4"><i class="fa fa-check fa-2x"></i><br/>Sessions</button>
-<button v-on:click="navDashboard" class="col-xs-4"><i class="fa fa-dashcube fa-2x"></i><br/>Dashboard</button>
-<button v-on:click="navStationScan" class="col-xs-4"><i class="fa fa-qrcode fa-2x" aria-hidden="true"></i><br/>QR Code</button>
+<button v-on:click="navSessions" class="col-xs-4"><i class="fa fa-video-camera fa-2x"></i><br/>Sessions</button>
+<button v-on:click="navDashboard" class="col-xs-4"><i class="fa fa-th-large fa-2x fa-is-active"></i><br/>Dashboard</button>
+<button v-on:click="navStationScan" class="col-xs-4"><i class="fa fa-qrcode fa-2x" aria-hidden="true"></i><br/>QR Scan</button>
 
       </div>
     </nav>
@@ -97,6 +101,7 @@ export default {
       var divContainer = document.querySelector("#divRecentThumbnailsContainer");
       var playContainer = document.querySelector("#divRecentThumbnailsPlay");
       document.getElementById("spanRecentSwingCount").innerHTML = getSwingLabel(lastSessionVideos.length);
+
       for (var i=0; i<Math.min(lastSessionVideos.length, 3);i++) {
         var div = document.createElement("div");
         div.classList.add("col-xs-3");

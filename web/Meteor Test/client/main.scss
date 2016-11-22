@@ -18,7 +18,7 @@ $darkorange: #b38645;
 // body
 body{
   font-family: 'Roboto', sans-serif;
-  background-color: #fff;
+  background-color: #f8f8f8;
   //background-image: url('../images/bg.jpg');
 }
 
@@ -377,6 +377,13 @@ i.play-green{
   font-weight: 300;
 }
 
+.footer button{
+  border-radius: 0px;
+  background: white;
+  box-shadow: none;
+  border: none;
+}
+
 i{color: #555;}
 
 
@@ -482,8 +489,8 @@ i{color: #555;}
 
   // video player
   .move-up{
-    position: relative;
-    top: -38px;
+    //position: relative;
+    //top: -38px;
   }
 
   .favorite-hover{
@@ -498,12 +505,23 @@ i{color: #555;}
 
 
   .video-wrapper{
-    height: 180px !important;
+    //height: 50vh !important;
+    //height: 200px;
+    background: #171717;
   }
 
   .video-menu-options button{
-    width: 33.33% !important;
+    width: 50% !important;
+    background: #166aad;
+    color: white;
+    font-family: lato;
+    font-weight: 300;
+    font-size: 20px;
+    border-top: 1px solid #185a8e !important;
+    border-bottom: 1px solid #224765 !important;
   }
+
+
 
 }
 
@@ -630,7 +648,7 @@ i{color: #555;}
 }
 
 .video-wrapper{
-  height: 400px;
+  //height: 400px;
 }
 
 .video-controls{
@@ -711,10 +729,17 @@ i{color: #555;}
   box-sizing: border-box !important;
 }
 .video-menu-options button{
-  width: 33.33%;
+  width: 50%;
   border: 0px;
   border-radius: 0px !important;
   height: 45px;
+  background: #166aad;
+  color: white;
+  font-family: lato;
+  font-weight: 300;
+  font-size: 20px;
+  border-top: 1px solid #185a8e !important;
+  border-bottom: 1px solid #224765 !important;
 }
 
 .btn-tag{
@@ -828,3 +853,25 @@ i{color: #555;}
   border-right: 0px;
   border-radius: 0px;
 }
+
+.video-menu-options button.btn-divider{
+  border-right: 1px solid #224765 !important;
+}
+
+.video-menu-options button:hover{
+  background: #1263a2 !important;
+  color: white !important;
+}
+
+.video-menu-options button:focus{
+  color: white !important;
+  outline: 0 !important;
+}
+
+.session-collection-button{
+  width: 100%;
+  background: #f5f5f5;
+
+}
+
+.session-collection-button span.session-number{float: left;}
