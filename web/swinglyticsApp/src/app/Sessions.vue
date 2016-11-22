@@ -52,6 +52,7 @@
       var that = this;
       doRequest("/api/v1/user/sessions", "GET", {}, function(http) {
         var sessions = JSON.parse(http.responseText);
+        console.log(sessions);
         for (var i=0;i<sessions.length;i++) {
           var ts = new Date(parseInt(sessions[i].sessionID.split("_")[1]))
           sessions[i].timeString = ts.toLocaleDateString() + " " + ts.toLocaleTimeString();
