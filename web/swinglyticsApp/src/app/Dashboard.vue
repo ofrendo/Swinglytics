@@ -128,7 +128,7 @@ export default {
         img.classList.add("img-responsive");
         img.classList.add("video-thumbnail");
         img.classList.add("img-circle");
-        img.src = "app/images/thumbnailPlaceholder.png";
+        img.src = "app/images/thumbnailPlaceholder.jpg";
 
         div.appendChild(img);
         divContainer.insertBefore(div, playContainer);
@@ -197,7 +197,7 @@ export default {
         img.classList.add("img-responsive");
         img.classList.add("video-thumbnail");
         img.classList.add("img-circle");
-        img.src = "app/images/thumbnailPlaceholder.png";
+        img.src = "app/images/thumbnailPlaceholder.jpg";
 
         div.appendChild(img);
         divContainer.insertBefore(div, playContainer);
