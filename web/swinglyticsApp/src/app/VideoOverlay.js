@@ -36,6 +36,16 @@ var VideoOverlay = (function() {
     }
   }
 
+  // test for new buttons
+  function canvasBtnClickNew(){
+    onNewLineClick();
+    //console.log("new line button click");
+  }
+  function canvasBtnClickErase(){
+    onRemoveClick();
+    //console.log("erase button click");
+  }
+
   function onNewLineClick() {
     if (newLineActive === false) {
       newLineActive = true;
@@ -46,12 +56,12 @@ var VideoOverlay = (function() {
   }
   function getNewLineActiveButtonColor() {
     return (newLineActive === true) ?
-            "gray" : 
+            "gray" :
             "white";
   }
   function getNewLineActiveLineColor() {
     return (newLineActive === true) ?
-            "gray" : 
+            "gray" :
             "black";
   }
 
@@ -94,6 +104,10 @@ var VideoOverlay = (function() {
 
     var video = document.getElementById("swingVideo");
     var canvas = document.getElementById("swingVideoCanvasOverlay");
+
+    var NewLineButton = document.getElementById("canvasNewLine");
+    var EraseButton = document.getElementById("canvasErase");
+
     var w = video.offsetWidth;
     var h = video.offsetHeight;
     //console.log("w=" + w + ", h=" + h);
@@ -110,9 +124,15 @@ var VideoOverlay = (function() {
 
     if (("ontouchstart" in window) === false) {
       // Desktop
-      canvas.addEventListener('click', function(e) {
-        var pos = getMousePos(canvas, e);
-        onClick(pos);
+      NewLineButton.addEventListener('click', function(e) {
+        //var pos = getMousePos(canvas, e);
+        //onClick(pos);
+        canvasBtnClickNew();
+      });
+      EraseButton.addEventListener('click', function(e) {
+        //var pos = getMousePos(canvas, e);
+        //onClick(pos);
+        canvasBtnClickErase();
       });
       addMultipleEvents(canvas, "mousedown", function(e) {
         var pos = getMousePos(canvas, e);
@@ -129,9 +149,15 @@ var VideoOverlay = (function() {
     }
     else {
       // Mobile
-      canvas.addEventListener('click', function(e) {
-        var pos = getMousePos(canvas, e);
-        onClick(pos);
+      NewLineButton.addEventListener('click', function(e) {
+        //var pos = getMousePos(canvas, e);
+        //onClick(pos);
+        canvasBtnClickNew();
+      });
+      EraseButton.addEventListener('click', function(e) {
+        //var pos = getMousePos(canvas, e);
+        //onClick(pos);
+        canvasBtnClickErase();
       });
       addMultipleEvents(canvas, "touchstart", function(e) {
         var pos = getMousePos(canvas, e);
@@ -149,26 +175,7 @@ var VideoOverlay = (function() {
       });
     }
 
-    canvas.addEventListener('click', function(e) {
-      //var pos = getMousePos(canvas, e);
-      //onClick(pos);
-      //alert(pos.x + " " +pos.y);
-    });
-    addMultipleEvents(canvas, "touchstart", function(e) {
-      var pos = getMousePos(canvas, e);
-      //alert(pos.x + " " +pos.y);
-      onDragStart(pos);
-      onClick(pos);
-    });
-    addMultipleEvents(canvas, "mousemove touchmove", function(e) {
-      //alert("HERE");
-      var pos = getMousePos(canvas, e);
-      onDragMove(pos);
-    });
-    addMultipleEvents(canvas, "mouseup touchend", function(e) {
-      var pos = getMousePos(canvas, e);
-      onDragStop(pos);
-    });
+
   }
   function addMultipleEvents(element, events, callback) {
     events.split(" ").forEach(function(eName) {
@@ -182,31 +189,33 @@ var VideoOverlay = (function() {
 
     // Draw UI
     // Draw new line button
-    context.fillStyle= getNewLineActiveButtonColor();
-    context.fillRect( OVERLAY.MARGIN_LEFT, OVERLAY.MARGIN_TOP_NEW_LINE, 
-                      OVERLAY.BUTTON_W, OVERLAY.BUTTON_W );  
-    context.font = "bold 30px Arial";
-    context.fillStyle = "black";
-    context.fillText( "L", OVERLAY.BUTTON_W/2, OVERLAY.BUTTON_W );
+
+    // context.fillStyle= getNewLineActiveButtonColor();
+    // context.fillRect( OVERLAY.MARGIN_LEFT, OVERLAY.MARGIN_TOP_NEW_LINE,
+    //                   OVERLAY.BUTTON_W, OVERLAY.BUTTON_W );
+    // context.font = "bold 30px Arial";
+    // context.fillStyle = "black";
+    // context.fillText( "L", OVERLAY.BUTTON_W/2, OVERLAY.BUTTON_W );
 
     // Draw remove line button
-    context.fillStyle="white";
-    context.fillRect( OVERLAY.MARGIN_LEFT, OVERLAY.MARGIN_TOP_REMOVE, 
-                      OVERLAY.BUTTON_W, OVERLAY.BUTTON_W );  
-    context.font = "bold 30px Arial";
-    context.fillStyle = "black";
-    context.fillText( "X", OVERLAY.BUTTON_W/2, OVERLAY.MARGIN_TOP_REMOVE+OVERLAY.BUTTON_W - 10 );
+
+    // context.fillStyle="white";
+    // context.fillRect( OVERLAY.MARGIN_LEFT, OVERLAY.MARGIN_TOP_REMOVE,
+    //                   OVERLAY.BUTTON_W, OVERLAY.BUTTON_W );
+    // context.font = "bold 30px Arial";
+    // context.fillStyle = "black";
+    // context.fillText( "X", OVERLAY.BUTTON_W/2, OVERLAY.MARGIN_TOP_REMOVE+OVERLAY.BUTTON_W - 10 );
 
     // Draw lines
     for (var i=0;i<currentLines.length;i++) {
       context.beginPath();
       context.moveTo(currentLines[i].x1, currentLines[i].y1);
       context.lineTo(currentLines[i].x2, currentLines[i].y2);
-      context.strokeStyle = "black";
+      context.strokeStyle = "#f44336";
       /*(i === currentLines.length-1) ?
                                 getNewLineActiveLineColor(): // only draw last line gray while dragging
                                 "black"*/
-      context.lineWidth = 6;  
+      context.lineWidth = 3;
       context.stroke();
     }
   }
@@ -220,4 +229,3 @@ var VideoOverlay = (function() {
   module.resetLines = resetLines;
   return module;
 })();
-

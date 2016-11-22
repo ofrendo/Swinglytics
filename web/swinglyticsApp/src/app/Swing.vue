@@ -3,13 +3,13 @@
       <div class="container-fluid swinglytics-navbar-alt">
       <div class="container">
         <div class="navbar-custom ">
-          <div class="swinglytics-brand">Swing Analyzer <span id="swingAnalyzerCount">({{parseInt(videoIndex)+parseInt(1)}}/{{session.videos.length}})</span></div>
+          <div class="swinglytics-brand"><span>Swing Analyzer</span> <span id="swingAnalyzerCount" class="swing-count">{{parseInt(videoIndex)+parseInt(1)}} of {{session.videos.length}}</span></div>
         </div>
       </div>
     </div>
 
 
-    <div class="container col-nopad video-container" >
+    <div class="container col-nopad video-container" style="overflow-y: hidden">
   <div clas="row">
     <div class="col-xs-12 col-nopad">
 
@@ -20,6 +20,8 @@
             Your browser does not support the video tag.
         </video>
         <canvas id="swingVideoCanvasOverlay"></canvas>
+        <button id="canvasNewLine" class="canvas-btn-newLine btn"><i class="fa fa-pencil" aria-hidden="true"></i></button>
+        <button id="canvasErase" class="canvas-btn-erase btn"><i class="fa fa-eraser" aria-hidden="true"></i></button>
         <!--<div id="favStar" class="favorite-hover" onClick="addRemoveFavorite()"><i class="fa fa-star-o fa-star-o-cust" aria-hidden="true"></i></div>-->
       </div>
     </div>
@@ -45,17 +47,7 @@
         </div>
       </div>
 
-      <div class="col-xs-12 text-center col-nopad">
-        <div id="tagBox" class="video-tag-options" style="visibility: hidden">
-          <button type="button" class="btn btn-default">Good</button><!--
-          --><button type="button" class="btn btn-default">Bad</button><!--
-          --><button type="button" class="btn btn-default">Great</button><br/>
-          <button type="button" class="btn btn-default">Posture</button><!--
-          --><button type="button" class="btn btn-default">Angle</button><!--
-          --><button type="button" class="btn btn-default">Feet</button><br/>
 
-        </div>
-      </div>
     </div>
   </div>
 </div>

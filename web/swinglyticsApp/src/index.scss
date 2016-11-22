@@ -898,3 +898,33 @@ i{color: #555;}
 .container-qr-code{
   padding-bottom: 65px;
 }
+
+.canvas-btn-newLine{
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  border-radius: 50%;
+  background: #2196f3;
+  i{color: white;}
+  height: 40px;
+  width: 40px;
+  text-align: center;
+  &:active:focus{outline: 0;}
+  &:focus{outline: 0;}
+  &:hover{outline: 0;}
+}
+
+.canvas-btn-erase{
+  position: absolute;
+  top: 60px;
+  left: 10px;
+  border-radius: 50%;
+  background: #166aad;
+  i{color: white;}
+  height: 40px;
+  width: 40px;
+  text-align: center;
+  &:active:focus{outline: 0;}
+  &:focus{outline: 0;}
+  &:hover{outline: 0;}
+}
