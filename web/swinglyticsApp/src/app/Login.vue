@@ -62,31 +62,29 @@ export default {
 
     login () {
 
-    var InputUsername = document.getElementById("usernameInput").value;
-    var InputPassword = document.getElementById("passwordInput").value;
+      var username = document.getElementById("usernameInput").value;
+      var password = document.getElementById("passwordInput").value;
 
-var that = this;
-var url = "/api/v1/user/login";
-var jsonParams = {
-username: InputUsername,
-password: InputPassword
-};
+      var that = this;
+      var url = "/api/v1/user/login";
+      var jsonParams = {
+        username: username,
+        password: password
+      };
 
-console.log(that);
-doRequest(url, "POST", jsonParams, function(http) {
-  console.log(http);
-  console.log(http.status); //returns 200, 403, etc IF STATUS CHECKEN
-  console.log(http.responseText); //returns text if any is returned (see documentation)
-  console.log(this);
-  console.log(that);
-    if(http.status === 200){
       console.log(that);
-      that.$router.replace(that.$route.query.redirect || '/dashboard');
-    }
+      doRequest(url, "POST", jsonParams, function(http) {
+        console.log(http);
+        console.log(http.status); //returns 200, 403, etc IF STATUS CHECKEN
+        console.log(http.responseText); //returns text if any is returned (see documentation)
+        console.log(this);
+        console.log(that);
+          if(http.status === 200){
+            console.log(that);
+            that.$router.replace(that.$route.query.redirect || '/dashboard');
+          }
 
-});
-
-
+      });
 
     }
 

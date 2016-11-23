@@ -61,34 +61,6 @@
 
 <script>
 
-function doRequest(url, jsonParams, callback) {
-
-  var params = "";
-  for (var key in jsonParams) {
-    params += key + "=" + jsonParams[key] + '&';
-  }
-  // remove last "&"
-  params = params.substring(0, params.length-1);
-
-
-  var http = new XMLHttpRequest();
-  http.open("POST", url, true);
-  http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-  http.withCredentials = true;
-
-  http.onreadystatechange = function() {//Call a function when the state changes.
-      if(http.readyState == 4) {
-        if (typeof callback === "function") {
-          callback(http);
-        }
-      }
-  }
-  console.log(http);
-  http.send(params);
-
-}
-
-
 export default {
   data () {
     return {
@@ -99,31 +71,32 @@ export default {
   },
   methods: {
 
-  register () {
+    register () {
+        var that = this;
+        var url = "/api/v1/user/register";
 
+        var username = document.getElementById("usernameInput").value;
+        var password = document.getElementById("passwordInput").value;
+        var email = document.getElementById("emailInput").value;
 
-      var url = "http://golf-innovation.com:3000/api/v1/user/register";
+        var jsonParams = {
+          username: username,
+          password: password,
+          email: email,
+          firstname: "",
+          lastname: ""
+        };
+        doRequest(url, "POST", jsonParams, function(http) {
+          console.log(http);
+          console.log(http.status); //returns 200, 403, etc
+          console.log(http.responseText); //returns text if any is returned (see documentation)
+          if (http.status === 200) {
+            that.$router.replace(that.$route.query.redirect || '/onboarding');
+          }
+        });
 
-      var InputUsername = document.getElementById("usernameInput").value;
-      var InputPassword = document.getElementById("passwordInput").value;
-      var InputEmail = document.getElementById("emailInput").value;
+    },
 
-      var jsonParams = {
-        username: InputUsername,
-        password: InputPassword,
-        email: InputEmail
-      };
-      doRequest(url, jsonParams, function(http) {
-        console.log(http);
-        console.log(http.status); //returns 200, 403, etc
-        console.log(http.responseText); //returns text if any is returned (see documentation)
-      });
-
-    this.$router.replace(this.$route.query.redirect || '/onboarding');
-
-  },
-
-  //end login
   }
 
   //end method
