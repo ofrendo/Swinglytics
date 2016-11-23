@@ -3,7 +3,7 @@
   <div class="container-fluid swinglytics-navbar">
     <div class="container">
       <div class="navbar-custom ">
-        <div class="swinglytics-brand">My Dashboard</div>
+        <div class="swinglytics-brand">My Dashboard<span class=""><i class="fa fa-sign-out fa-logout-cust" aria-hidden="true"></i></span></div>
       </div>
     </div>
   </div>
