@@ -22,25 +22,25 @@
               <div class="form-group">
                 <label class="control-label col-sm-3 login-label" for="email">Email:</label>
                 <div class="col-sm-9">
-                  <input type="email" class="form-control login-form-input" placeholder="">
+                  <input type="email" class="form-control login-form-input" id="emailInput" placeholder="">
                 </div>
               </div>
               <div class="form-group">
                 <label class="control-label col-sm-3 login-label" for="username">Username:</label>
                 <div class="col-sm-9">
-                  <input type="text" class="form-control login-form-input" placeholder="">
+                  <input type="text" class="form-control login-form-input" id="usernameInput" placeholder="">
                 </div>
               </div>
               <div class="form-group">
                 <label class="control-label col-sm-3 login-label" for="password">Password:</label>
                 <div class="col-sm-9">
-                  <input type="password" class="form-control login-form-input" placeholder="">
+                  <input type="password" class="form-control login-form-input" id="passwordInput" placeholder="">
                 </div>
               </div>
               <div class="form-group">
-                <label class="control-label col-sm-3 login-label" for="password"> Confirm:</label>
+                <label class="control-label col-sm-3 login-label" for="password">Password Confirm:</label>
                 <div class="col-sm-9">
-                  <input type="password" class="form-control login-form-input" placeholder="">
+                  <input type="password" class="form-control login-form-input" id="passwordconfirmInput" placeholder="">
                 </div>
               </div>
               <div class="form-group">
@@ -101,13 +101,17 @@ export default {
 
   register () {
 
+
       var url = "http://golf-innovation.com:3000/api/v1/user/register";
+
+      var InputUsername = document.getElementById("usernameInput").value;
+      var InputPassword = document.getElementById("passwordInput").value;
+      var InputEmail = document.getElementById("emailInput").value;
+
       var jsonParams = {
-        username: "testUserC",
-        password: "test1234C",
-        email: "testC@gmail.com",
-        firstname: "JohnD",
-        lastname: "DoeC"
+        username: InputUsername,
+        password: InputPassword,
+        email: InputEmail
       };
       doRequest(url, jsonParams, function(http) {
         console.log(http);

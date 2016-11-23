@@ -22,13 +22,13 @@
             <div class="form-group">
               <label class="control-label col-xs-12 col-sm-3 login-label" for="username">Username:</label>
               <div class="col-xs-12 col-sm-9">
-                <input v-model="user" type="text" class="form-control login-form-input" placeholder="">
+                <input v-model="user" type="text" id="usernameInput" class="form-control login-form-input" placeholder="">
               </div>
             </div>
             <div class="form-group">
               <label class="control-label col-xs-12 col-sm-3 login-label" for="password">Password:</label>
               <div class="col-xs-12 col-sm-9">
-                <input v-model="pass" type="password" class="form-control login-form-input" placeholder="">
+                <input v-model="pass" type="password" id="passwordInput" class="form-control login-form-input" placeholder="">
               </div>
             </div>
             <div class="form-group">
@@ -54,8 +54,6 @@ var that = this;
 export default {
   data () {
     return {
-      email: 'kingkuta@example.com',
-      pass: '',
       error: false
     }
   },
@@ -64,11 +62,14 @@ export default {
 
     login () {
 
+    var InputUsername = document.getElementById("usernameInput").value;
+    var InputPassword = document.getElementById("passwordInput").value;
+
 var that = this;
 var url = "/api/v1/user/login";
 var jsonParams = {
-  username: "testUser",
-  password: "test1234"
+username: InputUsername,
+password: InputPassword
 };
 
 console.log(that);
