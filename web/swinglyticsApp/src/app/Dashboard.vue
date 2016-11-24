@@ -3,7 +3,7 @@
   <div class="container-fluid swinglytics-navbar">
     <div class="container">
       <div class="navbar-custom ">
-        <div class="swinglytics-brand">My Dashboard<span class=""><i class="fa fa-sign-out fa-logout-cust" aria-hidden="true"></i></span></div>
+        <div class="swinglytics-brand">My Dashboard<span v-on:click="logout" id="spanLogout" class=""><i class="fa fa-sign-out fa-logout-cust" aria-hidden="true"></i></span></div>
       </div>
     </div>
   </div>
@@ -87,6 +87,7 @@ export default {
   },
 
   created: function () {
+
     // `this` points to the vm instance
     var that = this;
     //sendGetRequest
@@ -230,27 +231,36 @@ export default {
 
   methods: {
 
-  navSessions: function (event) {
-    this.$router.replace(this.$route.query.redirect || '/sessions');
-  },
+    logout: function(event) {
+      var that = this;
+      var url = "/api/v1/user/logout";
+      doRequest(url, "GET", {}, function(http) {
+        if (http.status === 200) {
+          that.$router.replace(that.$route.query.redirect || '/login');
+        }
+      });
+    },
 
-  navDashboard: function (event) {
-    this.$router.replace(this.$route.query.redirect || '/dashboard');
-  },
+    navSessions: function (event) {
+      this.$router.replace(this.$route.query.redirect || '/sessions');
+    },
 
-  navStationScan: function (event) {
-    this.$router.replace(this.$route.query.redirect || '/StationScan');
+    navDashboard: function (event) {
+      this.$router.replace(this.$route.query.redirect || '/dashboard');
+    },
 
-  },
+    navStationScan: function (event) {
+      this.$router.replace(this.$route.query.redirect || '/StationScan');
+    }
 
   //end login
-  },
+  }
 
 
 
 
   //end method
-  }
+}
 
 
 

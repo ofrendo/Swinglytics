@@ -91,10 +91,11 @@ export default {
       var session = null;
       for (var i=0;i<sessions.length;i++) {
         if (sessions[i].sessionID === sessionID) {
+          console.log("Loaded session: ");
+          console.log(sessions[i]);
           that.session = sessions[i];
         }
       }
-
       var videoID = that.session.videos[that.videoIndex].videoID;
       that.videoSrc = buildVideoURL(videoID);
       //videoElem.src = buildVideoURL(videoID);  // buildVideoURL(getParameterByName("videoID"))
@@ -106,7 +107,7 @@ export default {
       }
 
       //if not favorite
-      else{
+      else {
         document.getElementById("favStar").innerHTML = '<i class="fa fa-star-o fa-star-o-cust" aria-hidden="true"></i>'
       }
 
@@ -124,6 +125,14 @@ export default {
       }
       console.log("Now at: " + this.videoIndex);
       this.videoSrc = buildVideoURL(this.session.videos[this.videoIndex].videoID);
+
+      var video = this.session.videos[this.videoIndex];
+      if (video.rating === 1) {
+        document.getElementById("favStar").innerHTML = '<i class="fa fa-star fa-star-cust" aria-hidden="true"></i>'
+      }
+      else {
+        document.getElementById("favStar").innerHTML = '<i class="fa fa-star-o fa-star-o-cust" aria-hidden="true"></i>'
+      }
     },
 
     previous: function(videoIndex) {
@@ -133,6 +142,14 @@ export default {
       }
       console.log("Now at: " + this.videoIndex);
       this.videoSrc = buildVideoURL(this.session.videos[this.videoIndex].videoID);
+
+      var video = this.session.videos[this.videoIndex];
+      if (video.rating === 1) {
+        document.getElementById("favStar").innerHTML = '<i class="fa fa-star fa-star-cust" aria-hidden="true"></i>'
+      }
+      else {
+        document.getElementById("favStar").innerHTML = '<i class="fa fa-star-o fa-star-o-cust" aria-hidden="true"></i>'
+      }
     },
 
     navSessions: function (event) {
@@ -151,7 +168,7 @@ export default {
     addRemoveFavorite: function (event) {
 
       //if not yet a favorite check via classes
-      if(document.getElementById("favStar").innerHTML == '<i class="fa fa-star-o fa-star-o-cust" aria-hidden="true"></i>'){
+      if (document.getElementById("favStar").innerHTML == '<i class="fa fa-star-o fa-star-o-cust" aria-hidden="true"></i>') {
 
         //do API Call to set favorite
         var that = this;
@@ -166,22 +183,16 @@ export default {
         };
 
         doRequest(url, "POST", jsonParams, function(http) {
-          console.log(http);
-          console.log(http.status); //returns 200, 403, etc IF STATUS CHECKEN
-          console.log(http.responseText); //returns text if any is returned (see documentation)
-          console.log(this);
-          console.log(that);
-            if(http.status === 200){
-              console.log(that);
-              // add to favorite and replace star
-              document.getElementById("favStar").innerHTML = '<i class="fa fa-star fa-star-cust" aria-hidden="true"></i>';
-            }
+          if(http.status === 200){
+            console.log(that);
+            // add to favorite and replace star
+            document.getElementById("favStar").innerHTML = '<i class="fa fa-star fa-star-cust" aria-hidden="true"></i>';
+          }
         });
       }
 
       //if not a favorite check via classes
-      else{
-
+      else {
 
         //do API Call
         var that = this;
@@ -195,16 +206,11 @@ export default {
         };
 
         doRequest(url, "POST", jsonParams, function(http) {
-          console.log(http);
-          console.log(http.status); //returns 200, 403, etc IF STATUS CHECKEN
-          console.log(http.responseText); //returns text if any is returned (see documentation)
-          console.log(this);
-          console.log(that);
-            if(http.status === 200){
-              console.log(that);
-              /// delete from favorites
-              document.getElementById("favStar").innerHTML = '<i class="fa fa-star-o fa-star-o-cust" aria-hidden="true"></i>'
-            }
+          if(http.status === 200){
+            console.log(that);
+            /// delete from favorites
+            document.getElementById("favStar").innerHTML = '<i class="fa fa-star-o fa-star-o-cust" aria-hidden="true"></i>'
+          }
         });
       }
     },
