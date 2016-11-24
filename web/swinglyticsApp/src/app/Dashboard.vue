@@ -3,7 +3,7 @@
   <div class="container-fluid swinglytics-navbar">
     <div class="container">
       <div class="navbar-custom ">
-        <div class="swinglytics-brand">My Dashboard<span class=""><i class="fa fa-sign-out fa-logout-cust" aria-hidden="true"></i></span></div>
+        <div class="swinglytics-brand">My Dashboard<span v-on:click="logout" id="spanLogout" class=""><i class="fa fa-sign-out fa-logout-cust" aria-hidden="true"></i></span></div>
       </div>
     </div>
   </div>
@@ -15,7 +15,7 @@
         </div>
         <div class="video-thumbnail-bar">
           <div class="video-thumbnail-bar-info" id="RecentSwingDate">
-            Wed. October 25, 2016 at 14:51:29 PM
+            No sessions recorded
           </div>
           <div id="divRecentThumbnailsContainer" class="row col-thumbnail">
             <!--  -->
@@ -87,6 +87,7 @@ export default {
   },
 
   created: function () {
+
     // `this` points to the vm instance
     var that = this;
     //sendGetRequest
@@ -98,7 +99,9 @@ export default {
       //console.log(sessions[0].timeString);
 
       // Add last session thumbnails
-      var lastSessionVideos = sessions[sessions.length-1].videos;
+      var lastSessionVideos = (sessions.length > 0) ?
+                               sessions[sessions.length-1].videos :
+                               [];
       var divContainer = document.querySelector("#divRecentThumbnailsContainer");
       var playContainer = document.querySelector("#divRecentThumbnailsPlay");
       document.getElementById("spanRecentSwingCount").innerHTML = getSwingLabel(lastSessionVideos.length);
@@ -134,30 +137,31 @@ export default {
         divContainer.insertBefore(div, playContainer);
       }
 
-      var lastSession = sessions[sessions.length-1];
-      var ts = new Date(parseInt(lastSession.sessionID.split("_")[1]))
+      if (sessions.length > 0) {
+        var lastSession = sessions[sessions.length-1];
+        var ts = new Date(parseInt(lastSession.sessionID.split("_")[1]))
 
-      var myDate = ts.toString();
-      console.log(myDate);
-      var dayLong = myDate.split(" ")[0];
-      var monthShort = myDate.split(" ")[1];
-      var dayCount = myDate.split(" ")[2];
-      var year = myDate.split(" ")[3];
+        var myDate = ts.toString();
+        console.log(myDate);
+        var dayLong = myDate.split(" ")[0];
+        var monthShort = myDate.split(" ")[1];
+        var dayCount = myDate.split(" ")[2];
+        var year = myDate.split(" ")[3];
 
-      var dateFormatted = dayLong + ". " + monthShort + " " + dayCount + ", " + year;
-      console.log("Finished date: " + dateFormatted);
+        var dateFormatted = dayLong + ". " + monthShort + " " + dayCount + ", " + year;
+        console.log("Finished date: " + dateFormatted);
 
+        lastSession.timeString = dateFormatted + " at " + ts.toLocaleTimeString();
+        RecentSwingDate.innerHTML = lastSession.timeString;
 
-      lastSession.timeString = dateFormatted + " at " + ts.toLocaleTimeString();
-      RecentSwingDate.innerHTML = lastSession.timeString;
+        // Link player
+        playContainer.addEventListener("click", function(e) {
+          var sessionID = sessions[sessions.length-1].sessionID;
+          that.$router.replace(that.$route.query.redirect || "/Swing?sessionID=" + sessionID);
+        });
+      }
 
-      // Link player
-      playContainer.addEventListener("click", function(e) {
-        var sessionID = sessions[sessions.length-1].sessionID;
-        that.$router.replace(that.$route.query.redirect || "/Swing?sessionID=" + sessionID);
-      });
-
-
+      // ====================
       // Add favourite videos
       var divContainer = document.querySelector("#divFavouriteThumbnailsContainer");
       var playContainer = document.querySelector("#divFavouriteThumbnailsPlay");
@@ -205,8 +209,7 @@ export default {
 
       // Link player
       playContainer.addEventListener("click", function(e) {
-        var sessionID = sessions[sessions.length-1].sessionID;
-        console.log("TODO")
+        //var sessionID = sessions[sessions.length-1].sessionID;
         //that.$router.replace(that.$route.query.redirect || "/SingleSession?sessionID=" + sessionID);
       });
 
@@ -228,27 +231,36 @@ export default {
 
   methods: {
 
-  navSessions: function (event) {
-    this.$router.replace(this.$route.query.redirect || '/sessions');
-  },
+    logout: function(event) {
+      var that = this;
+      var url = "/api/v1/user/logout";
+      doRequest(url, "GET", {}, function(http) {
+        if (http.status === 200) {
+          that.$router.replace(that.$route.query.redirect || '/login');
+        }
+      });
+    },
 
-  navDashboard: function (event) {
-    this.$router.replace(this.$route.query.redirect || '/dashboard');
-  },
+    navSessions: function (event) {
+      this.$router.replace(this.$route.query.redirect || '/sessions');
+    },
 
-  navStationScan: function (event) {
-    this.$router.replace(this.$route.query.redirect || '/StationScan');
+    navDashboard: function (event) {
+      this.$router.replace(this.$route.query.redirect || '/dashboard');
+    },
 
-  },
+    navStationScan: function (event) {
+      this.$router.replace(this.$route.query.redirect || '/StationScan');
+    }
 
   //end login
-  },
+  }
 
 
 
 
   //end method
-  }
+}
 
 
 

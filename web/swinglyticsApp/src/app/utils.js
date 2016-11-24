@@ -16,11 +16,11 @@ function doRequest(url, method, jsonParams, callback) {
   http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
   http.onreadystatechange = function() {//Call a function when the state changes.
 
-      if (http.readyState == 4) {
-        if (typeof callback === "function") {
-          callback(http);
-        }
+    if (http.readyState == 4) {
+      if (typeof callback === "function") {
+        callback(http);
       }
+    }
   }
   console.log(http);
   http.send(params);
