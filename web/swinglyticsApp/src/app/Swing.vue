@@ -35,10 +35,19 @@
           <i v-if="videoPlaying" class="fa fa-pause fa-pause-cust" aria-hidden="true"></i>
           <i v-if="!videoPlaying" class="fa fa-play fa-play-cust" aria-hidden="true"></i>
         </button><!--
+        
         --><button id="speedHalfButton" type="button" class="btn btn-default btn-speed" v-on:click="decreaseSpeed()">0.5x</button><!--
+
         --><button id="speedNormalButton" type="button" class="btn btn-default btn-speed btn-speed-active" v-on:click="resetSpeed()">1x</button><!--
-        --><button type="button" class="btn btn-default btn-repeat" v-on:click="repeat()"><i class="fa fa-repeat fa-repeat-cust" aria-hidden="true"></i></button><!--
-        --><button id="favStar" type="button" class="btn btn-default btn-favorite" v-on:click="addRemoveFavorite()"><i class="fa fa-star-o fa-star-o-cust" aria-hidden="true"></i></button>
+
+        --><button type="button" class="btn btn-default btn-repeat" v-on:click="repeat()">
+          <i class="fa fa-repeat fa-repeat-cust" aria-hidden="true"></i>
+        </button><!--
+
+        --><button id="favStar" type="button" class="btn btn-default btn-favorite" v-on:click="addRemoveFavorite()">
+          <i v-if="!isFavorite" class="fa fa-star-o fa-star-o-cust" aria-hidden="true"></i>
+          <i v-if="isFavorite" class="fa fa-star fa-star-cust" aria-hidden="true"></i>
+        </button>
       </div>
     </div>
 
@@ -78,6 +87,7 @@ export default {
       videoSrc: "",
       videoIndex: getParameterByName("videoIndex") || 0,
       videoPlaying: false,
+      isFavorite: false,
       session: {
         videos: []
       }
@@ -110,12 +120,7 @@ export default {
       //check initial favorite status
       //if favorite
       if (that.session.videos[that.videoIndex].rating === 1){
-        document.getElementById("favStar").innerHTML = '<i class="fa fa-star fa-star-cust" aria-hidden="true"></i>';
-      }
-
-      //if not favorite
-      else {
-        document.getElementById("favStar").innerHTML = '<i class="fa fa-star-o fa-star-o-cust" aria-hidden="true"></i>'
+        that.isFavorite = true;
       }
 
       VideoOverlay.initCanvasVideoOverlay();
@@ -129,34 +134,26 @@ export default {
       if (videoIndex < this.session.videos.length-1) {
         this.videoIndex++;
         VideoOverlay.resetLines();
+        this.videoPlaying = false;
       }
       console.log("Now at: " + this.videoIndex);
       this.videoSrc = buildVideoURL(this.session.videos[this.videoIndex].videoID);
 
       var video = this.session.videos[this.videoIndex];
-      if (video.rating === 1) {
-        document.getElementById("favStar").innerHTML = '<i class="fa fa-star fa-star-cust" aria-hidden="true"></i>'
-      }
-      else {
-        document.getElementById("favStar").innerHTML = '<i class="fa fa-star-o fa-star-o-cust" aria-hidden="true"></i>'
-      }
+      this.isFavorite = (video.rating === 1) ? true : false;
     },
 
     previous: function(videoIndex) {
       if (videoIndex > 0) {
         this.videoIndex--;
         VideoOverlay.resetLines();
+        this.videoPlaying = false;
       }
       console.log("Now at: " + this.videoIndex);
       this.videoSrc = buildVideoURL(this.session.videos[this.videoIndex].videoID);
 
       var video = this.session.videos[this.videoIndex];
-      if (video.rating === 1) {
-        document.getElementById("favStar").innerHTML = '<i class="fa fa-star fa-star-cust" aria-hidden="true"></i>'
-      }
-      else {
-        document.getElementById("favStar").innerHTML = '<i class="fa fa-star-o fa-star-o-cust" aria-hidden="true"></i>'
-      }
+      this.isFavorite = (video.rating === 1) ? true : false;
     },
 
     navSessions: function (event) {
@@ -174,52 +171,26 @@ export default {
 
     addRemoveFavorite: function (event) {
 
-      //if not yet a favorite check via classes
-      if (document.getElementById("favStar").innerHTML == '<i class="fa fa-star-o fa-star-o-cust" aria-hidden="true"></i>') {
+      var newRating = (this.isFavorite === false) ?
+                   1 :
+                   0;
 
-        //do API Call to set favorite
-        var that = this;
+      // do API Call to set favorite
+      var that = this;
+      var vidID = that.session.videos[that.videoIndex].videoID;
+      console.log(vidID);
+      var url = "/api/v1/user/videos/" + vidID;
+      var jsonParams = {
+        videoID: vidID,
+        rating: newRating
+      };
 
-        var vidID = that.session.videos[that.videoIndex].videoID;
-        console.log(vidID);
+      doRequest(url, "POST", jsonParams, function(http) {
+        if (http.status === 200){
+          that.isFavorite = !that.isFavorite;
+        }
+      });
 
-        var url = "/api/v1/user/videos/" + vidID;
-        var jsonParams = {
-          videoID: vidID,
-          rating: 1
-        };
-
-        doRequest(url, "POST", jsonParams, function(http) {
-          if(http.status === 200){
-            console.log(that);
-            // add to favorite and replace star
-            document.getElementById("favStar").innerHTML = '<i class="fa fa-star fa-star-cust" aria-hidden="true"></i>';
-          }
-        });
-      }
-
-      //if not a favorite check via classes
-      else {
-
-        //do API Call
-        var that = this;
-
-        var vidID = that.session.videos[that.videoIndex].videoID;
-
-        var url = "/api/v1/user/videos/" + vidID;
-        var jsonParams = {
-          videoID: vidID,
-          rating: 0
-        };
-
-        doRequest(url, "POST", jsonParams, function(http) {
-          if(http.status === 200){
-            console.log(that);
-            /// delete from favorites
-            document.getElementById("favStar").innerHTML = '<i class="fa fa-star-o fa-star-o-cust" aria-hidden="true"></i>'
-          }
-        });
-      }
     },
 
     startPauseVideo: function () {
@@ -251,12 +222,6 @@ export default {
       //document.getElementById("swingVideo").play();
     },
 
-    repeat: function () {
-      document.getElementById("swingVideo").currentTime = 0;
-      document.getElementById("swingVideo").play();
-      this.videoPlaying = true;
-    },
-
     resetSpeed: function (){
       document.getElementById("swingVideo").playbackRate = 1;
       //document.getElementById("swingVideo").play();
@@ -272,6 +237,12 @@ export default {
           document.getElementById("speedHalfButton").className = document.getElementById("speedHalfButton").className.replace( /(?:^|\s)btn-speed-active(?!\S)/g , '' )
         }
       }
+    },
+
+    repeat: function () {
+      document.getElementById("swingVideo").currentTime = 0;
+      document.getElementById("swingVideo").play();
+      this.videoPlaying = true;
     }
 
 
