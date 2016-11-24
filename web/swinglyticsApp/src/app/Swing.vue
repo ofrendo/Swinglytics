@@ -14,7 +14,7 @@
     <div class="col-xs-12 col-nopad">
 
       <div class="video-wrapper text-center embed-responsive embed-responsive-4by3">
-          <video id="swingVideo" style="visibility:hidden;" v-bind:src="videoSrc" class="embed-responsive-item" muted autoplay webkit-playsinline="true" playsinline="true">
+          <video id="swingVideo" style="visibility:hidden;" v-bind:src="videoSrc" class="embed-responsive-item" autoplay webkit-playsinline="true" playsinline="true">
 
           <!-- <source id="swingVideoSrc" src="" type="video/mp4"> -->
             Your browser does not support the video tag.

@@ -1,8 +1,10 @@
-const VIDEO_STORAGE_DOMAIN = "https://s3.eu-central-1.amazonaws.com/hopinone/"
+//const VIDEO_STORAGE_DOMAIN = "https://s3.eu-central-1.amazonaws.com/hopinone/";
+const VIDEO_STORAGE_DOMAIN = "https://192.168.178.76:3000/ftp/";
 
 function doRequest(url, method, jsonParams, callback) {
-  //var domain = "http://localhost:3000";
-  var domain = "https://golf-innovation.com:3000";
+  //var domain = "https://localhost:3000";
+  var domain = "https://192.168.178.76:3000";
+  //var domain = "https://golf-innovation.com:3000";
   url = domain + url;
   var params = "";
   for (var key in jsonParams) {
