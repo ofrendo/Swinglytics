@@ -64,6 +64,12 @@ def start_recording_alsa(triggerSound, audioFilenameTS):
 	
 	lastTriggerMessage = -1 # when was the trigger message last written to the console?
 	currentFileIndex = -1 # which file is being written to currently?
+
+	# If camera is starting up:
+	# block until it is recording
+	while (conf.CAMERA_TRIGGER_FILENAMES_INDEX.value == -2): 
+		time.sleep(0.01)
+
 	for filename in itertools.cycle(conf.AUDIO_FILENAMES):
 		i = getFileIndex(filename)
 		audioFilenameTS[i] = time.time()	
@@ -83,7 +89,8 @@ def start_recording_alsa(triggerSound, audioFilenameTS):
 			# Write data to file
 			if l:
 				total += l
-				w.writeframes(data)
+				
+			w.writeframes(data)
 
 			# Check if threshold was reached
 			# How many bytes should be read? Max 32, if this part is too slow the length can also be larger
@@ -94,14 +101,18 @@ def start_recording_alsa(triggerSound, audioFilenameTS):
 			else:
 				count = 32
 
-			a = numpy.fromstring(data, dtype=numpy.int16, count=count)
-			val = numpy.abs(a).mean()
-			if val > conf.SOUND_THRESHOLD:
-				triggerSound.value = time.time()
+			try:
+				a = numpy.fromstring(data, dtype=numpy.int16, count=count)
+				val = numpy.abs(a).mean()
+				if val > conf.SOUND_THRESHOLD:
+					triggerSound.value = time.time()
 
-				if (triggerSound.value - lastTriggerMessage > 0.1):
-					lastTriggerMessage = time.time()
-					print("[SOUND] Sound trigger", val, " at ", triggerSound.value)
+					if (triggerSound.value - lastTriggerMessage > 0.1):
+						lastTriggerMessage = time.time()
+						print("[SOUND] Sound trigger", val, " at ", triggerSound.value)
+			except ValueError as e:
+				print("[SOUND] Sound recording error")
+			
 		w.close()
 
 # Method used for Banana Pi
