@@ -30,15 +30,23 @@
     <div class="move-up">
     <div class="col-xs-12 text-center col-nopad">
       <div class="video-controls">
-        <!-- keep comments for correct spacing -->
+        <!-- keep comments for correct spacing: otherwise browsers add tiny amount of pixels between buttons -->
         <button id="playButton" type="button" class="btn btn-default btn-play" v-on:click="startPauseVideo()">
           <i v-if="videoPlaying" class="fa fa-pause fa-pause-cust" aria-hidden="true"></i>
           <i v-if="!videoPlaying" class="fa fa-play fa-play-cust" aria-hidden="true"></i>
         </button><!--
         
-        --><button id="speedHalfButton" type="button" class="btn btn-default btn-speed" v-on:click="decreaseSpeed()">0.5x</button><!--
+        --><button id="speedHalfButton" type="button" class="btn btn-default btn-speed" 
+                   v-on:click="decreaseSpeed()"
+                   v-bind:class="{'btn-speed-active': playbackSpeed === 0.5}">
+           0.5x
+        </button><!--
 
-        --><button id="speedNormalButton" type="button" class="btn btn-default btn-speed btn-speed-active" v-on:click="resetSpeed()">1x</button><!--
+        --><button id="speedNormalButton" type="button" class="btn btn-default btn-speed" 
+                   v-on:click="resetSpeed()"
+                   v-bind:class="{'btn-speed-active': playbackSpeed === 1}">
+          1x
+        </button><!--
 
         --><button type="button" class="btn btn-default btn-repeat" v-on:click="repeat()">
           <i class="fa fa-repeat fa-repeat-cust" aria-hidden="true"></i>
@@ -87,6 +95,7 @@ export default {
       videoSrc: "",
       videoIndex: getParameterByName("videoIndex") || 0,
       videoPlaying: false,
+      playbackSpeed: 1,
       isFavorite: false,
       session: {
         videos: []
@@ -136,11 +145,8 @@ export default {
         VideoOverlay.resetLines();
         this.videoPlaying = false;
       }
-      console.log("Now at: " + this.videoIndex);
-      this.videoSrc = buildVideoURL(this.session.videos[this.videoIndex].videoID);
-
-      var video = this.session.videos[this.videoIndex];
-      this.isFavorite = (video.rating === 1) ? true : false;
+      
+      this.resetUIValues();
     },
 
     previous: function(videoIndex) {
@@ -149,11 +155,17 @@ export default {
         VideoOverlay.resetLines();
         this.videoPlaying = false;
       }
+      
+      this.resetUIValues();
+    },
+
+    resetUIValues() {
       console.log("Now at: " + this.videoIndex);
       this.videoSrc = buildVideoURL(this.session.videos[this.videoIndex].videoID);
 
       var video = this.session.videos[this.videoIndex];
       this.isFavorite = (video.rating === 1) ? true : false;
+      this.playbackSpeed = 1;
     },
 
     navSessions: function (event) {
@@ -178,7 +190,7 @@ export default {
       // do API Call to set favorite
       var that = this;
       var vidID = that.session.videos[that.videoIndex].videoID;
-      console.log(vidID);
+      console.log("Changing favorite status to " + newRating + " for " + vidID);
       var url = "/api/v1/user/videos/" + vidID;
       var jsonParams = {
         videoID: vidID,
@@ -207,36 +219,13 @@ export default {
     },
 
     decreaseSpeed: function () {
-      if(document.getElementById("speedHalfButton").className.match(/(?:^|\s)btn-speed-active(?!\S)/)){
-      // button is already active
-      }
-      else{
-        // add active class
-        document.getElementById("speedHalfButton").className += " btn-speed-active";
-        // check if "normal" speed is active remove active class
-        if(document.getElementById("speedNormalButton").className.match(/(?:^|\s)btn-speed-active(?!\S)/)){
-          document.getElementById("speedNormalButton").className = document.getElementById("speedNormalButton").className.replace( /(?:^|\s)btn-speed-active(?!\S)/g , '' )
-        }
-      }
+      this.playbackSpeed = 0.5;
       document.getElementById("swingVideo").playbackRate = 0.5;
-      //document.getElementById("swingVideo").play();
     },
 
     resetSpeed: function (){
+      this.playbackSpeed = 1;
       document.getElementById("swingVideo").playbackRate = 1;
-      //document.getElementById("swingVideo").play();
-
-      if(document.getElementById("speedNormalButton").className.match(/(?:^|\s)btn-speed-active(?!\S)/)){
-        // if it already has the class do nothing
-      }
-      else{
-        // add active class
-        document.getElementById("speedNormalButton").className += " btn-speed-active";
-        // check if "halfSpeed" is active
-        if(document.getElementById("speedHalfButton").className.match(/(?:^|\s)btn-speed-active(?!\S)/)){
-          document.getElementById("speedHalfButton").className = document.getElementById("speedHalfButton").className.replace( /(?:^|\s)btn-speed-active(?!\S)/g , '' )
-        }
-      }
     },
 
     repeat: function () {

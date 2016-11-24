@@ -72,15 +72,8 @@ export default {
         password: password
       };
 
-      console.log(that);
       doRequest(url, "POST", jsonParams, function(http) {
-        console.log(http);
-        console.log(http.status); //returns 200, 403, etc IF STATUS CHECKEN
-        console.log(http.responseText); //returns text if any is returned (see documentation)
-        console.log(this);
-        console.log(that);
-          if(http.status === 200){
-            console.log(that);
+          if (http.status === 200){
             that.$router.replace(that.$route.query.redirect || '/dashboard');
           }
 

@@ -87,9 +87,6 @@ export default {
           lastname: ""
         };
         doRequest(url, "POST", jsonParams, function(http) {
-          console.log(http);
-          console.log(http.status); //returns 200, 403, etc
-          console.log(http.responseText); //returns text if any is returned (see documentation)
           if (http.status === 200) {
             that.$router.replace(that.$route.query.redirect || '/onboarding');
           }
