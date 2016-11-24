@@ -46,7 +46,9 @@ def writeToFile(camera, filename, cameraFilenameTS):
     camera.wait_recording(conf.CAMERA_CAP_LEN)
 
 def start_record(triggerMotion, cameraFilenameTS):
-   
+    # Block soundListener until camera is started
+    conf.CAMERA_TRIGGER_FILENAMES_INDEX.value = -2
+
     camera = picamera.PiCamera()
     camera.resolution = conf.CAMERA_RESOLUTION # might need to reduce this
     camera.framerate = conf.CAMERA_FRAMERATE

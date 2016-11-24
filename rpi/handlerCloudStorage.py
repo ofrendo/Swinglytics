@@ -91,7 +91,7 @@ def uploadFileFTP(filename, key):
 	dt = time.time() - startTime
 	print("[STORAGE] Uploaded file to FTP  in", dt)
 
-def uploadFile(videoName, thumbnailName, tsMiddle, loginCheck=True):
+def uploadFile(videoName, thumbnailName, tsMiddle, loginCheck=False):
 	# Check if a user is logged in before submitting a video
 	userID = None
 	if (loginCheck == True):
@@ -102,7 +102,7 @@ def uploadFile(videoName, thumbnailName, tsMiddle, loginCheck=True):
 		else:
 			print("[STORAGE] User", userID, "is logged in.")
 	else:
-		userID = "bob"
+		userID = "testUser"
 
 	# Key is what the file will be named on the server, for example
 	# swingClip_{stationID}_{timestamp}_{random}.mp4
