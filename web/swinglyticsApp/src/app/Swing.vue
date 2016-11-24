@@ -14,7 +14,7 @@
     <div class="col-xs-12 col-nopad">
 
       <div class="video-wrapper text-center embed-responsive embed-responsive-4by3">
-          <video id="swingVideo" style="visibility:hidden;" v-bind:src="videoSrc" class="embed-responsive-item" autoplay webkit-playsinline="true" playsinline="true">
+          <video id="swingVideo" style="visibility:hidden;" v-bind:src="videoSrc" class="embed-responsive-item" webkit-playsinline="true" playsinline="true">
 
           <!-- <source id="swingVideoSrc" src="" type="video/mp4"> -->
             Your browser does not support the video tag.
@@ -31,7 +31,10 @@
     <div class="col-xs-12 text-center col-nopad">
       <div class="video-controls">
         <!-- keep comments for correct spacing -->
-        <button id="playButton" type="button" class="btn btn-default btn-play" v-on:click="startPauseVideo()"><i class="fa fa-pause fa-pause-cust" aria-hidden="true"></i></button><!--
+        <button id="playButton" type="button" class="btn btn-default btn-play" v-on:click="startPauseVideo()">
+          <i v-if="videoPlaying" class="fa fa-pause fa-pause-cust" aria-hidden="true"></i>
+          <i v-if="!videoPlaying" class="fa fa-play fa-play-cust" aria-hidden="true"></i>
+        </button><!--
         --><button id="speedHalfButton" type="button" class="btn btn-default btn-speed" v-on:click="decreaseSpeed()">0.5x</button><!--
         --><button id="speedNormalButton" type="button" class="btn btn-default btn-speed btn-speed-active" v-on:click="resetSpeed()">1x</button><!--
         --><button type="button" class="btn btn-default btn-repeat" v-on:click="repeat()"><i class="fa fa-repeat fa-repeat-cust" aria-hidden="true"></i></button><!--
@@ -74,6 +77,7 @@ export default {
     return {
       videoSrc: "",
       videoIndex: getParameterByName("videoIndex") || 0,
+      videoPlaying: false,
       session: {
         videos: []
       }
@@ -99,6 +103,9 @@ export default {
       var videoID = that.session.videos[that.videoIndex].videoID;
       that.videoSrc = buildVideoURL(videoID);
       //videoElem.src = buildVideoURL(videoID);  // buildVideoURL(getParameterByName("videoID"))
+      videoElem.addEventListener("ended", function(e) {
+        that.videoPlaying = false;
+      })
 
       //check initial favorite status
       //if favorite
@@ -216,16 +223,16 @@ export default {
     },
 
     startPauseVideo: function () {
-      //document.getElementById("swingVideo").play();
-      if (document.getElementById("playButton").innerHTML == '<i class="fa fa-play fa-play-cust" aria-hidden="true"></i>'){
-        console.log("Play button was pressed");
-        document.getElementById("playButton").innerHTML = '<i class="fa fa-pause fa-pause-cust" aria-hidden="true"></i>';
-        document.getElementById("swingVideo").play();
+      var videoElem = document.getElementById("swingVideo");
+      if (this.videoPlaying === false) {
+        videoElem.play();
+        this.videoPlaying = true;
       }
-      else{
-        document.getElementById("playButton").innerHTML = '<i class="fa fa-play fa-play-cust" aria-hidden="true"></i>';
-        document.getElementById("swingVideo").pause();
+      else {
+        videoElem.pause();
+        this.videoPlaying = false;
       }
+
     },
 
     decreaseSpeed: function () {
@@ -247,7 +254,7 @@ export default {
     repeat: function () {
       document.getElementById("swingVideo").currentTime = 0;
       document.getElementById("swingVideo").play();
-      document.getElementById("playButton").innerHTML = '<i class="fa fa-pause fa-pause-cust" aria-hidden="true"></i>';
+      this.videoPlaying = true;
     },
 
     resetSpeed: function (){
